@@ -1,11 +1,13 @@
 package com.soohyeon.booklog.repository;
 
 import com.soohyeon.booklog.domain.Book;
+import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Repository
 public class MemoryBookRepository implements BookRepository {
 
     // 동시성 문제를 고려하여 실제 프로젝트에서는 ConcurrentHashMap 사용
