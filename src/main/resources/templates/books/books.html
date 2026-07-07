@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 서재 - BookLog</title>
+</head>
+<body>
+
+<header>
+    <h1>📚 나의 책장 (v1.0)</h1>
+    <a th:href="@{/}">🏠 홈으로 가기</a>
+</header>
+
+<main>
+    <section>
+        <h2>등록된 도서 목록</h2>
+
+        <button type="button" onclick="location.href='#'">➕ 새 책 등록하기 (준비 중)</button>
+
+        <br><br>
+
+        <table border="1">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>제목</th>
+                <th>저자</th>
+                <th>독서 상태</th>
+                <th>평점</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="book : ${books}">
+                <td th:text="${book.id}">1</td>
+                <td><strong th:text="${book.title}">책 제목</strong></td>
+                <td th:text="${book.author}">저자</td>
+                <td th:text="${book.status.description}">읽는 중</td>
+                <td th:text="${#strings.repeat('⭐', book.rating)}">⭐⭐⭐⭐⭐</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(books)}">
+                <td colspan="5" style="text-align: center;">등록된 책이 없습니다. 책을 등록해 보세요!</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<footer>
+    <p>© 2026 BookLog</p>
+</footer>
+
+</body>
+</html>
