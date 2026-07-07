@@ -40,5 +40,8 @@
 ## 💡 개발 특이사항 및 에러 트래픽 기록
 
 - **2026.07.07:**
-    - 첫 로컬 머지 후 푸시 과정에서 rejected (fetch first) 에러 발생. 원격 저장소의 README.md 이력이 로컬에 동기화되지 않아 발생한 문제로 확인되어, git pull origin master --rebase 명령어로 이력을 정렬한 후 푸시 성공함.
+    - 첫 로컬 머지 후 푸시 과정에서 rejected (fetch first) 에러 발생.<br>
+      원격 저장소의 README.md 이력이 로컬에 동기화되지 않아 발생한 문제로 확인되어,<br>
+      git pull origin master --rebase 명령어로 이력을 정렬한 후 푸시 성공함.
+  
     - books.html: 컨트롤러에서 넘어온 List<Book>을 타임리프 th:each 반복문으로 처리함. 평점 속성은 별 특수문자가 반복 출력되도록 구현함.
