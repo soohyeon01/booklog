@@ -29,15 +29,24 @@
                 <th>독서 상태</th>
                 <th>평점</th>
             </tr>
-
-            <!-- TODO: books.html 에서 평점 옆 칸에 삭제 버튼 추가로 구현 -->
+            </thead>
             <tbody>
             <tr th:each="book : ${books}">
                 <td th:text="${book.id}">1</td>
-                <td><strong th:text="${book.title}">책 제목</strong></td>
+                <td>
+                    <a th:href="@{/books/{bookId}(bookId=${book.id})}">
+                        <strong th:text="${book.title}">책 제목</strong>
+                    </a>
+                </td>
                 <td th:text="${book.author}">저자</td>
                 <td th:text="${book.status.description}">읽는 중</td>
                 <td th:text="${#strings.repeat('⭐', book.rating)}">⭐⭐⭐⭐⭐</td>
+                <td>
+                    <form th:action="@{/books/{bookId}/delete(bookId=${book.id})}" method="post" style="display:inline;">
+                        <button type="submit" onclick="return confirm('정말 이 책을 삭제하시겠습니까?');"
+                        style="color: red; padding: 2px 5px;">삭제</button>
+                    </form>
+                </td>
             </tr>
             <tr th:if="${#lists.isEmpty(books)}">
                 <td colspan="5" style="text-align: center;">등록된 책이 없습니다. 책을 등록해 보세요!</td>

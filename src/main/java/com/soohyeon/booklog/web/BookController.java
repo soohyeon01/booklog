@@ -20,6 +20,7 @@ public class BookController {
 
     private final BookService bookService;
 
+    // 1
     @GetMapping
     public String books(Model model) {
         List<Book> books = bookService.findBooks();
@@ -27,19 +28,28 @@ public class BookController {
         return "books/books";
     }
 
+    // 2-1
     @GetMapping("/add")
     public String addForm() {
         return "books/addForm";
     }
 
+    /**
+     * 2-2
+     * v1.1: 메세지 커스텀
+     * 변수를 url에 직접 더해서 쓰는 경우,
+     * 데이터에 한글, 공백, 특수문자가 사용된 경우 URL 인코딩이 깨지므로
+     * 현재의 방법을 사용하는 편이 좋음
+     */
     @PostMapping("/add")
     public String add(@ModelAttribute("book") Book book, RedirectAttributes redirectAttributes) {
         Book savedBook = bookService.saveBook(book);
         redirectAttributes.addAttribute("bookId", savedBook.getId());
-        redirectAttributes.addAttribute("status", true);
+        redirectAttributes.addFlashAttribute("message", "책이 성공적으로 등록되었습니다!");
         return "redirect:/books/{bookId}";
     }
 
+    // 3
     @GetMapping("/{bookId}")
     public String book(@PathVariable Long bookId, Model model) {
         Book book = optionalToBook(bookId);
@@ -48,6 +58,7 @@ public class BookController {
         return "/books/book";
     }
 
+    // 4-1
     @GetMapping("/{bookId}/edit")
     public String editForm(@PathVariable Long bookId, Model model) {
         Book book = optionalToBook(bookId);
@@ -56,15 +67,18 @@ public class BookController {
         return "books/editForm";
     }
 
+    // 4-2
+    // v1.1 메세지 커스텀
     @PostMapping("/{bookId}/edit")
     public String edit(@PathVariable Long bookId, @ModelAttribute Book updateParam, RedirectAttributes redirectAttributes) {
         bookService.updateBook(bookId, updateParam);
-
         redirectAttributes.addAttribute("bookId", bookId);
-        redirectAttributes.addAttribute("status", true);
+
+        redirectAttributes.addFlashAttribute("message", "정보가 정상적으로 수정되었습니다!");
         return "redirect:/books/{bookId}";
     }
 
+    // 5
     @PostMapping("{bookId}/delete")
     public String delete(@PathVariable Long bookId) {
 
@@ -82,7 +96,6 @@ public class BookController {
                 () -> new IllegalArgumentException("존재하지 않는 도서 ID입니다: " + bookId));
         return book;
     }
-
 
 
     @PostConstruct

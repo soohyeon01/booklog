@@ -13,9 +13,7 @@
 </header>
 
 <main>
-  <!-- TODO: 파라미터를 받아 수정 완료, 등록 완료 로 메세지 나누기 -->
-  <h3 th:if="${param.status}" style="color: blue;">🎉 처리가 완료되었습니다!</h3>
-
+  <h3 th:if="${message}" th:text="${message}" style="color: blue">🎉 알림 메시지 영역</h3>
   <section>
     <table border="1">
       <tbody>
