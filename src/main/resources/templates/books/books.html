@@ -16,7 +16,7 @@
     <section>
         <h2>등록된 도서 목록</h2>
 
-        <button type="button" onclick="location.href='#'">➕ 새 책 등록하기 (준비 중)</button>
+        <button type="button" th:onclick="|location.href='@{/books/add}'|">➕ 새 책 등록하기 (준비 중)</button>
 
         <br><br>
 
@@ -29,7 +29,8 @@
                 <th>독서 상태</th>
                 <th>평점</th>
             </tr>
-            </thead>
+
+            <!-- TODO: books.html 에서 평점 옆 칸에 삭제 버튼 추가로 구현 -->
             <tbody>
             <tr th:each="book : ${books}">
                 <td th:text="${book.id}">1</td>

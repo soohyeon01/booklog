@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>책 정보 수정 - BookLog</title>
+</head>
+<body>
+
+<header>
+  <h1>✏️ 도서 정보 수정 (v1.0)</h1>
+  <a th:href="@{/books/{bookId}(bookId=${book.id})}">🔙 상세 화면으로 가기</a>
+</header>
+
+<main>
+  <section>
+    <form th:action="@{/books/{bookId}/edit(bookId=${book.id})}" method="post">
+      <table border="1">
+        <tbody>
+        <tr>
+          <td><strong>도서 ID</strong></td>
+          <td><span th:text="${book.id}">1</span> (수정 불가)</td>
+        </tr>
+        <tr>
+          <td><label for="title"><strong>제목 *</strong></label></td>
+          <td><input type="text" id="title" name="title" th:value="${book.title}" required></td>
+        </tr>
+        <tr>
+          <td><label for="author">저자</label></td>
+          <td><input type="text" id="author" name="author" th:value="${book.author}"></td>
+        </tr>
+        <tr>
+          <td><label>독서 상태</label></td>
+          <td>
+            <input type="radio" id="statusWish" name="status" value="WISH" th:checked="${book.status.name() == 'WISH'}">
+            <label for="statusWish">읽고 싶은 책</label>
+            <input type="radio" id="statusReading" name="status" value="READING" th:checked="${book.status.name() == 'READING'}">
+            <label for="statusReading">읽는 중</label>
+            <input type="radio" id="statusDone" name="status" value="DONE" th:checked="${book.status.name() == 'DONE'}">
+            <label for="statusDone">완독</label>
+          </td>
+        </tr>
+        <tr>
+          <td><label for="rating">평점</label></td>
+          <td>
+            <select id="rating" name="rating">
+              <option value="5" th:selected="${book.rating == 5}">⭐⭐⭐⭐⭐ (5점)</option>
+              <option value="4" th:selected="${book.rating == 4}">⭐⭐⭐⭐ (4점)</option>
+              <option value="3" th:selected="${book.rating == 3}">⭐⭐⭐ (3점)</option>
+              <option value="2" th:selected="${book.rating == 2}">⭐⭐ (2점)</option>
+              <option value="1" th:selected="${book.rating == 1}">⭐ (1점)</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td><label for="summary">한줄평</label></td>
+          <td><input type="text" id="summary" name="summary" th:value="${book.summary}" style="width: 300px;"></td>
+        </tr>
+        <tr>
+          <td><label for="memo">메모</label></td>
+          <td><textarea id="memo" name="memo" rows="5" cols="40" th:text="${book.memo}"></textarea></td>
+        </tr>
+        </tbody>
+      </table>
+      <br>
+      <button type="submit">💾 저장하기</button>
+      <button type="button" th:onclick="|location.href='@{/books/{bookId}(bookId=${book.id})}'|">취소</button>
+    </form>
+  </section>
+</main>
+
+<footer>
+  <p>© 2026 BookLog</p>
+</footer>
+
+</body>
+</html>

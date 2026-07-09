@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>책 상세 정보 - BookLog</title>
+</head>
+<body>
+
+<header>
+  <h1>📖 도서 상세 정보 (v1.0)</h1>
+  <a th:href="@{/books}">📋 목록으로 돌아가기</a>
+</header>
+
+<main>
+  <!-- TODO: 파라미터를 받아 수정 완료, 등록 완료 로 메세지 나누기 -->
+  <h3 th:if="${param.status}" style="color: blue;">🎉 처리가 완료되었습니다!</h3>
+
+  <section>
+    <table border="1">
+      <tbody>
+      <tr>
+        <td><strong>도서 ID</strong></td>
+        <td th:text="${book.id}">1</td>
+      </tr>
+      <tr>
+        <td><strong>제목</strong></td>
+        <td><strong th:text="${book.title}">데미안</strong></td>
+      </tr>
+      <tr>
+        <td><strong>저자</strong></td>
+        <td th:text="${book.author}">헤르만 헤세</td>
+      </tr>
+      <tr>
+        <td><strong>독서 상태</strong></td>
+        <td th:text="${book.status.description}">읽는 중</td>
+      </tr>
+      <tr>
+        <td><strong>평점</strong></td>
+        <td th:text="${#strings.repeat('⭐', book.rating)}">⭐⭐⭐⭐⭐</td>
+      </tr>
+      <tr>
+        <td><strong>한줄평</strong></td>
+        <td th:text="${book.summary}">내면의 성장을 이끄는 최고의 책</td>
+      </tr>
+      <tr>
+        <td><strong>메모</strong></td>
+        <td><pre th:text="${book.memo}">싱클레어가 크로머를 만나고...</pre></td>
+      </tr>
+      </tbody>
+    </table>
+    <br>
+
+    <button type="button" th:onclick="|location.href='@{/books/{bookId}/edit(bookId=${book.id})}'|">✏️ 수정하기</button>
+
+    <form th:action="@{/books/{bookId}/delete(bookId=${book.id})}" method="post" style="display:inline;">
+      <button type="submit" onclick="return confirm('정말 이 책을 삭제하시겠습니까?');" style="color: red;">❌ 삭제하기</button>
+    </form>
+  </section>
+</main>
+
+<footer>
+  <p>© 2026 BookLog</p>
+</footer>
+
+</body>
+</html>
