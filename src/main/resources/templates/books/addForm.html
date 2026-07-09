@@ -7,10 +7,7 @@
 </head>
 <body>
 
-<header>
-    <h1>➕ 새 책 등록하기 (v1.0)</h1>
-    <a th:href="@{/books}">📋 목록으로 돌아가기</a>
-</header>
+<header th:replace="~{fragment/base :: mainHeader('➕ 새 책 등록하기 (v1.2)')}"></header>
 
 <main>
     <section>
@@ -64,10 +61,6 @@
         </form>
     </section>
 </main>
-
-<footer>
-    <p>© 2026 BookLog</p>
-</footer>
-
+<footer th:replace="~{fragment/base :: mainFooter}"></footer>
 </body>
 </html>
