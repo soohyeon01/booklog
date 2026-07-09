@@ -22,23 +22,21 @@
 
 ## 🗺️ 2. 개발 일지 (Daily Log)
 
-### 🟢 완료된 기능 (Done)
+### 🟡 예정된 기능 (To-Do) -> 🟢 모두 완료 (Done)
 - **2026.07.07 (Tue)**
     - [x] 초기 세팅: 프로젝트 생성 및 메인 웰컴 페이지 구현
     - [x] 백엔드 구현: `Book` 도메인, `MemoryBookRepository`, `BookServiceImpl`, `BookController` 구현
-    - [x] 화면 연동: 샘플 데이터를 포함한 **책 목록 조회 화면(`GET /books`)** 구현
+    - [x] 1: 화면 연동: 샘플 데이터를 포함한 **책 목록 조회 화면(`GET /books`)** 구현
     - [x] 배포: `master` 브랜치 첫 Merge 및 `v1.0-list` 태그 발행
 
 
 - **2026.07.09 (Thu)**
-  - [x] 새 책 등록 폼 화면 구현 (`addForm.html`) 및 GET 매핑 연동
-  - [x] `@ModelAttribute`를 활용한 데이터 바인딩 및 저장 로직 구현 (POST)
-  - [x] 새로고침 중복 등록 버그 방지를 위한 **PRG 패턴** 및 `RedirectAttributes` 적용 완료
-
-### 🟡 예정된 기능 (To-Do)
-- **Next Step**
-    - [ ] 기능 3: 책 상세 조회 화면 구현
-    - [ ] 기능 4, 5: 책 수정 및 삭제 기능 구현
+  - [x] 2: 새 책 등록 폼 화면 구현 (`addForm.html`) 및 GET 매핑 연동
+  - [x] 2: `@ModelAttribute`를 활용한 데이터 바인딩 및 저장 로직 구현 (POST)
+  - [x] 2: 새로고침 중복 등록 버그 방지를 위한 **PRG 패턴** 및 `RedirectAttributes` 적용 완료
+  - [x] 3: `@PathVariable`을 활용한 책 상세 조회 기능 구현
+  - [x] 4, 5: 책 수정 및 삭제 기능 구현
+  - [x] 배포: v1.0 최종 완료 태그 발행 (`v1.0-final`)
 
 ---
 

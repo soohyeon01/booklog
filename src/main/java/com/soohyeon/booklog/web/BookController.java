@@ -27,22 +27,11 @@ public class BookController {
         return "books/books";
     }
 
-    /**
-     * 새 책 등록 폼 화면 이동
-     * URL: GET /books/add
-     */
     @GetMapping("/add")
     public String addForm() {
         return "books/addForm";
     }
 
-    /**
-     * 새 책 등록
-     *
-     * @ModelAttribute 사용 시, model.addAttribute() 자동 추가
-     * PRG 패턴 적용
-     * URL: POST /books/add
-     */
     @PostMapping("/add")
     public String add(@ModelAttribute("book") Book book, RedirectAttributes redirectAttributes) {
         Book savedBook = bookService.saveBook(book);
@@ -51,20 +40,49 @@ public class BookController {
         return "redirect:/books/{bookId}";
     }
 
-    /**
-     * 책 상세 조회
-     * 옵셔널 까서 넣기
-     * URL: GET /books/{bookId}
-     */
     @GetMapping("/{bookId}")
     public String book(@PathVariable Long bookId, Model model) {
-        Optional<Book> bookOptional = bookService.findBookById(bookId);
-        Book book = bookOptional.orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 도서 ID입니다: " + bookId));
+        Book book = optionalToBook(bookId);
         model.addAttribute("book", book);
 
         return "/books/book";
     }
+
+    @GetMapping("/{bookId}/edit")
+    public String editForm(@PathVariable Long bookId, Model model) {
+        Book book = optionalToBook(bookId);
+        model.addAttribute("book", book);
+
+        return "books/editForm";
+    }
+
+    @PostMapping("/{bookId}/edit")
+    public String edit(@PathVariable Long bookId, @ModelAttribute Book updateParam, RedirectAttributes redirectAttributes) {
+        bookService.updateBook(bookId, updateParam);
+
+        redirectAttributes.addAttribute("bookId", bookId);
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/books/{bookId}";
+    }
+
+    @PostMapping("{bookId}/delete")
+    public String delete(@PathVariable Long bookId) {
+
+        bookService.removeBook(bookId);
+
+        return "redirect:/books";
+    }
+
+    /**
+     * 옵셔널을 검증하여 Book 객체로 변환하는 메서드
+     */
+    private Book optionalToBook(Long bookId) {
+        Optional<Book> bookOptional = bookService.findByBookId(bookId);
+        Book book = bookOptional.orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 도서 ID입니다: " + bookId));
+        return book;
+    }
+
 
 
     @PostConstruct
