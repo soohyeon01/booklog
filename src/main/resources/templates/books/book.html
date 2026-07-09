@@ -1,60 +1,102 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head th:replace="~{fragment/base :: commonHead}">
     <title>책 상세 정보 - BookLog</title>
 </head>
 <body>
 
-<header th:replace="~{fragment/base :: mainHeader('📖 도서 상세 정보 (v1.2)')}"></header>
-<main>
-    <h3 th:if="${message}" th:text="${message}" style="color: blue">🎉 알림 메시지 영역</h3>
-    <section>
-        <table border="1">
-            <tbody>
-            <tr>
-                <td><strong>도서 ID</strong></td>
-                <td th:text="${book.id}">1</td>
-            </tr>
-            <tr>
-                <td><strong>제목</strong></td>
-                <td><strong th:text="${book.title}">데미안</strong></td>
-            </tr>
-            <tr>
-                <td><strong>저자</strong></td>
-                <td th:text="${book.author}">헤르만 헤세</td>
-            </tr>
-            <tr>
-                <td><strong>독서 상태</strong></td>
-                <td th:text="${book.status.description}">읽는 중</td>
-            </tr>
-            <tr>
-                <td><strong>평점</strong></td>
-                <td th:text="${#strings.repeat('⭐', book.rating)}">⭐⭐⭐⭐⭐</td>
-            </tr>
-            <tr>
-                <td><strong>한줄평</strong></td>
-                <td th:text="${book.summary}">내면의 성장을 이끄는 최고의 책</td>
-            </tr>
-            <tr>
-                <td><strong>메모</strong></td>
-                <td>
-                    <pre th:text="${book.memo}">싱클레어가 크로머를 만나고...</pre>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <br>
+<header th:replace="~{fragment/base :: mainHeader('도서 상세 정보 (v1.2)')}"></header>
 
-        <button type="button" th:onclick="|location.href='@{/books/{bookId}/edit(bookId=${book.id})}'|">✏️ 수정하기</button>
+<main class="container my-5" style="max-width: 700px;">
 
-        <form th:action="@{/books/{bookId}/delete(bookId=${book.id})}" method="post" style="display:inline;">
-            <button type="submit" onclick="return confirm('정말 이 책을 삭제하시겠습니까?');" style="color: red;">❌ 삭제하기</button>
-        </form>
-        <button type="button" th:onclick="|location.href='@{/books}'|">📋 목록으로</button>
+    <div th:if="${message}" class="alert alert-success alert-dismissible fade show mb-4 fw-bold shadow-sm" role="alert">
+        ✨ <span th:text="${message}">알림 메시지 영역</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <section class="card shadow-sm p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+            <h3 class="fw-bold text-dark mb-0">도서 상세 정보</h3>
+            <span class="badge bg-secondary py-2 px-3 fs-6">ID: <span th:text="${book.id}">1</span></span>
+        </div>
+
+        <div class="list-group list-group-flush mb-4">
+
+            <div class="list-group-item py-3">
+                <div class="row">
+                    <div class="col-sm-3 text-secondary fw-semibold">제목</div>
+                    <div class="col-sm-9"><h4 class="fw-bold text-primary mb-0" th:text="${book.title}">데미안</h4></div>
+                </div>
+            </div>
+
+            <div class="list-group-item py-3">
+                <div class="row">
+                    <div class="col-sm-3 text-secondary fw-semibold">저자</div>
+                    <div class="col-sm-9 fw-semibold text-dark" th:text="${book.author}">헤르만 헤세</div>
+                </div>
+            </div>
+
+            <div class="list-group-item py-3">
+                <div class="row">
+                    <div class="col-sm-3 text-secondary fw-semibold">독서 상태</div>
+                    <div class="col-sm-9">
+                        <span th:if="${book.status.name() == 'WISH'}" class="badge bg-warning text-white py-2 px-3 fw-bold">읽고 싶은 책</span>
+                        <span th:if="${book.status.name() == 'READING'}" class="badge bg-info text-white py-2 px-3 fw-bold">읽는 중</span>
+                        <span th:if="${book.status.name() == 'DONE'}" class="badge bg-success py-2 px-3 fw-bold">완독</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="list-group-item py-3">
+                <div class="row">
+                    <div class="col-sm-3 text-secondary fw-semibold">평점</div>
+                    <div class="col-sm-9 text-warning fs-5" th:text="${#strings.repeat('⭐', book.rating)}">⭐⭐⭐⭐⭐</div>
+                </div>
+            </div>
+
+            <div class="list-group-item py-3">
+                <div class="row">
+                    <div class="col-sm-3 text-secondary fw-semibold">한줄평</div>
+                    <div class="col-sm-9 text-muted fst-italic" th:text="${book.summary}">내면의 성장을 이끄는 최고의 책</div>
+                </div>
+            </div>
+
+            <div class="list-group-item py-3">
+                <div class="row">
+                    <div class="col-sm-3 text-secondary fw-semibold">상세 메모</div>
+                    <div class="col-sm-9">
+                        <div class="bg-light p-3 rounded border text-dark" style="min-height: 100px; white-space: pre-wrap;" th:text="${book.memo}">
+                            싱클레어가 크로머를 만나고...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <div class="d-flex justify-content-between align-items-center">
+            <button type="button" class="btn btn-outline-secondary px-3 fw-bold" th:onclick="|location.href='@{/books}'|">
+                목록으로
+            </button>
+
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-primary px-3 fw-bold shadow-sm" th:onclick="|location.href='@{/books/{bookId}/edit(bookId=${book.id})}'|">
+                    수정하기
+                </button>
+
+                <form th:action="@{/books/{bookId}/delete(bookId=${book.id})}" method="post" style="display:inline;">
+                    <button type="submit" onclick="return confirm('정말 이 책을 삭제하시겠습니까?');" class="btn btn-outline-danger px-3 fw-bold">
+                        삭제하기
+                    </button>
+                </form>
+            </div>
+        </div>
+
     </section>
 </main>
+
 <footer th:replace="~{fragment/base :: mainFooter}"></footer>
 </body>
 </html>

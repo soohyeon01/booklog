@@ -1,6 +1,6 @@
-# 📚 북로그(BookLog) v1.0 기능 명세서 & 개발 일지
+# 📚 북로그(BookLog) v1.2 스펙 명세서 & 개발 일지
 
-## 📋 1. 기능 및 데이터 명세
+## 📋 1. 스펙 명세
 
 ### 1-1. 도메인 모델 (Book)
 * **ID**: 고유 식별 번호 (`Long`)
@@ -61,3 +61,9 @@
 - 상세 페이지 진입 시 화이트라벨 에러 발생.
 - 컨트롤러에서 Optional<Book> 객체를 알맹이 분리 없이 그대로 Model에 담아 뷰로 넘김으로써, 타임리프가 필드 추출에 실패함.
 - 백엔드 단에서 .orElseThrow(() -> new IllegalArgumentException(...))를 통해 Book 객체만 빼내어 Model에 담아주도록 수정.
+
+---
+
+### 🔗 관련 문서 바로가기
+* [🖼️ v1.2 결과 화면(Screenshots) 보러가기](./screenshots.md)
+* [🏠 메인 README로 돌아가기](../../README.md)

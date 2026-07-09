@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
+<head th:fragment="commonHead">
+    <meta charset="UTF-8">
+    <link href="../css/bootstrap.min.css"
+          th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+
 <header th:fragment="mainHeader(title)">
     <h1 th:text="${title}">BookLog v1.2</h1>
     <hr>
