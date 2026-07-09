@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>서버 내부 오류 - BookLog</title>
+</head>
+<body>
+
+<header th:replace="~{fragment/base :: mainHeader('🔥 500 Internal Server Error')}"></header>
+
+<main style="text-align: center; padding: 50px 0;">
+  <h2 style="color: red;">⚠️ 존재하지 않는 정보입니다!</h2>
+  <p>존재하지 않는 정보를 입력하셨거나, 서버에 일시적인 문제가 생겼습니다.</p>
+  <br>
+  <button type="button" th:onclick="|location.href='@{/books}'|">🏠 내 서재 메인으로 가기</button>
+</main>
+
+<footer th:replace="~{fragment/base :: mainFooter}"></footer>
+
+</body>
+</html>
