@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface BookService {
 
-    Long registerBook(Book book);
+    Book saveBook(Book book);
     Optional<Book> findBookById(Long id);
     List<Book> findBooks();
     void modifyBook(Long bookId, Book updateParam);
