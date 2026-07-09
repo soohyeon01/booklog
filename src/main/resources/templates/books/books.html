@@ -1,81 +1,90 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head th:replace="~{fragment/base :: commonHead}">
     <title>내 서재 - BookLog</title>
 </head>
 <body>
 
-<header th:replace="~{fragment/base :: mainHeader('📚 나의 책장 (v1.2)')}"></header>
-<main>
-    <section>
-        <h2>등록된 도서 목록</h2>
+<header th:replace="~{fragment/base :: mainHeader('나의 책장 (v1.2)')}"></header>
 
-        <div style="margin-bottom: 20px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ddd;">
+<main class="container my-5">
+
+    <section class="card shadow-sm p-4">
+        <h2 class="mb-4 fw-bold text-dark">등록된 도서 목록</h2>
+
+        <div class="btn-group w-100 mb-4" role="group" aria-label="Book status filter">
             <a th:href="@{/books}"
-               th:style="${currentStatus == null} ? 'font-weight: bold; color: blue; margin-right: 15px;' : 'margin-right: 15px;'">
-                전체보기(<span th:text="${totalCount}">0</span>)
+               th:class="${currentStatus == null} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
+                전체보기 (<span th:text="${totalCount}">0</span>)
             </a>
 
             <a th:href="@{/books(status='WISH')}"
-               th:style="${currentStatus?.name() == 'WISH'} ? 'font-weight: bold; color: blue; margin-right: 15px;' : 'margin-right: 15px;'">
-                읽고 싶은 책(<span th:text="${wishCount}">0</span>)
+               th:class="${currentStatus?.name() == 'WISH'} ? 'btn btn-warning text-white fw-bold' : 'btn btn-outline-secondary'">
+                읽고 싶은 책 (<span th:text="${wishCount}">0</span>)
             </a>
 
             <a th:href="@{/books(status='READING')}"
-               th:style="${currentStatus?.name() == 'READING'} ? 'font-weight: bold; color: blue; margin-right: 15px;' : 'margin-right: 15px;'">
-                읽는 중(<span th:text="${readingCount}">0</span>)
+               th:class="${currentStatus?.name() == 'READING'} ? 'btn btn-info text-white fw-bold' : 'btn btn-outline-secondary'">
+                읽는 중 (<span th:text="${readingCount}">0</span>)
             </a>
 
             <a th:href="@{/books(status='DONE')}"
-               th:style="${currentStatus?.name() == 'DONE'} ? 'font-weight: bold; color: blue;'">
-                완독(<span th:text="${doneCount}">0</span>)
+               th:class="${currentStatus?.name() == 'DONE'} ? 'btn btn-success fw-bold' : 'btn btn-outline-secondary'">
+                완독 (<span th:text="${doneCount}">0</span>)
             </a>
         </div>
 
-        <div style="margin-bottom: 10px;">
-            <button type="button" th:onclick="|location.href='@{/books/add}'|">➕ 새 책 등록하기</button>
+        <div class="d-flex justify-content-end mb-3">
+            <button type="button" class="btn btn-success fw-bold shadow-sm" th:onclick="|location.href='@{/books/add}'|">
+                새 책 등록하기
+            </button>
         </div>
-        <br><br>
 
-        <table border="1">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>제목</th>
-                <th>저자</th>
-                <th>독서 상태</th>
-                <th>평점</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="book : ${books}">
-                <td th:text="${book.id}">1</td>
-                <td>
-                    <a th:href="@{/books/{bookId}(bookId=${book.id})}">
-                        <strong th:text="${book.title}">책 제목</strong>
-                    </a>
-                </td>
-                <td th:text="${book.author}">저자</td>
-                <td th:text="${book.status.description}">읽는 중</td>
-                <td th:text="${#strings.repeat('⭐', book.rating)}">⭐⭐⭐⭐⭐</td>
-                <td>
-                    <form th:action="@{/books/{bookId}/delete(bookId=${book.id})}" method="post"
-                          style="display:inline;">
-                        <button type="submit" onclick="return confirm('정말 이 책을 삭제하시겠습니까?');"
-                                style="color: red; padding: 2px 5px;">삭제
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(books)}">
-                <td colspan="5" style="text-align: center;">등록된 책이 없습니다. 책을 등록해 보세요!</td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle text-center border-top">
+                <thead class="table-light text-secondary small text-uppercase">
+                <tr>
+                    <th style="width: 8%;">ID</th>
+                    <th style="width: 32%; text-align: left;">제목</th>
+                    <th style="width: 20%;">저자</th>
+                    <th style="width: 15%;">독서 상태</th>
+                    <th style="width: 15%;">평점</th>
+                    <th style="width: 10%;">관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="book : ${books}">
+                    <td th:text="${book.id}" class="text-secondary small">1</td>
+                    <td style="text-align: left;">
+                        <a th:href="@{/books/{bookId}(bookId=${book.id})}" class="text-decoration-none fw-semibold text-primary" th:text="${book.title}">
+                            책 제목
+                        </a>
+                    </td>
+                    <td th:text="${book.author}">저자</td>
+                    <td>
+                        <span th:if="${book.status.name() == 'WISH'}" class="badge bg-warning text-white py-1 px-2">읽고 싶은</span>
+                        <span th:if="${book.status.name() == 'READING'}" class="badge bg-info text-white py-1 px-2">읽는 중</span>
+                        <span th:if="${book.status.name() == 'DONE'}" class="badge bg-success py-1 px-2">완독</span>
+                    </td>
+                    <td th:text="${#strings.repeat('⭐', book.rating)}" class="text-warning small">⭐⭐⭐⭐⭐</td>
+                    <td>
+                        <form th:action="@{/books/{bookId}/delete(bookId=${book.id})}" method="post" style="display:inline;">
+                            <button type="submit" onclick="return confirm('정말 이 책을 삭제하시겠습니까?');"
+                                    class="btn btn-sm btn-outline-danger py-1 px-2">
+                                삭제
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(books)}">
+                    <td colspan="6" class="text-center py-4 text-muted">등록된 책이 없습니다. 책을 등록해 보세요!</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </section>
 </main>
+
 <footer th:replace="~{fragment/base :: mainFooter}"></footer>
 </body>
 </html>
