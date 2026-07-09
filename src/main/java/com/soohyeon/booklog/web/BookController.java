@@ -7,13 +7,11 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/books")
@@ -40,7 +38,8 @@ public class BookController {
 
     /**
      * 새 책 등록
-     * @ModelAttribute  사용 시, model.addAttribute() 자동 추가
+     *
+     * @ModelAttribute 사용 시, model.addAttribute() 자동 추가
      * PRG 패턴 적용
      * URL: POST /books/add
      */
@@ -51,6 +50,22 @@ public class BookController {
         redirectAttributes.addAttribute("status", true);
         return "redirect:/books/{bookId}";
     }
+
+    /**
+     * 책 상세 조회
+     * 옵셔널 까서 넣기
+     * URL: GET /books/{bookId}
+     */
+    @GetMapping("/{bookId}")
+    public String book(@PathVariable Long bookId, Model model) {
+        Optional<Book> bookOptional = bookService.findBookById(bookId);
+        Book book = bookOptional.orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 도서 ID입니다: " + bookId));
+        model.addAttribute("book", book);
+
+        return "/books/book";
+    }
+
 
     @PostConstruct
     public void init() {
