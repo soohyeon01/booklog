@@ -13,7 +13,7 @@
 기능 명세서와 개발일지, 최종 결과 화면은 아래 문서에서 확인하실 수 있습니다.
 
 * [📝 v1.2 스펙 명세서 & 개발 일지 보러가기](docs/v1/requirements-v1.md)
-* [🖼️ v1.2 릴리즈 최종 스크린샷 보러가기](docs/v1/screenshots.md)
+* [🖼️ v1.2 최종 릴리즈 결과 화면](docs/v1/screenshots.md)
 
 ---
 
