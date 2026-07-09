@@ -31,11 +31,14 @@
 
 ---
 
-### ✏️ 3. 도서 정보 수정 (Edit Info)
-* **핵심 기능**: 타임리프 `th:checked`, `th:selected` 문법을 활용한 기존 데이터 동적 바인딩.
+### ✏️ 3. 도서 정보 수정 및 반영 워크플로우 (Edit Info)
+* **핵심 기능**: 타임리프 `th:checked`, `th:selected` 문법을 활용한 기존 데이터 동적 바인딩 및 수정 처리.
 * **UI 포인트**: 도서 고유 ID를 읽기 전용(`readonly`) 비활성화 배지 박스로 처리하여 오조작 방지.
 
-![02_edit_form](./images/edit.png)
+| ✏️ 기존 정보 수정 폼 (`editForm.html`) | ✨ 수정 완료 알림 및 상세 조회 (`book.html`) |
+| :---: | :---: |
+| <img src="./images/edit.png" width="100%"> | <img src="./images/edit_success.png" width="100%"> |
+| *기존 도서 데이터가 온전히 동적 바인딩된 화면* | *수정 완료 후 상세 페이지로 리다이렉트되어 Alert 노출* |
 
 ---
 
