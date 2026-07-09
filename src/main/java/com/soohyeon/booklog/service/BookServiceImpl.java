@@ -21,7 +21,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Optional<Book> findBookById(Long id) {
+    public Optional<Book> findByBookId(Long id) {
         return bookRepository.findById(id);
     }
 
@@ -31,7 +31,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void modifyBook(Long bookId, Book updateParam) {
+    public void updateBook(Long bookId, Book updateParam) {
         bookRepository.update(bookId, updateParam);
     }
 
