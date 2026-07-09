@@ -20,11 +20,38 @@ public class BookController {
 
     private final BookService bookService;
 
-    // 1
+    /**
+     * 1. 도서 전체 목록 조회 및 필터링 (v1.2 대시보드 반영)
+     * URL: GET /books 또는 GET /books?status=READING
+     */
     @GetMapping
-    public String books(Model model) {
-        List<Book> books = bookService.findBooks();
-        model.addAttribute("books", books);
+    public String books(@RequestParam(value = "status", required = false) BookStatus status,
+                        Model model) {
+
+        List<Book> allBooks = bookService.findBooks();
+
+        long totalCount = allBooks.size();
+        long wishCount = allBooks.stream().filter(b -> b.getStatus() == BookStatus.WISH).count();
+        long readingCount = allBooks.stream().filter(b -> b.getStatus() == BookStatus.READING).count();
+        long doneCount = allBooks.stream().filter(b -> b.getStatus() == BookStatus.DONE).count();
+
+        List<Book> filteredBooks;
+        if (status != null) {
+            filteredBooks = allBooks.stream()
+                    .filter(b -> b.getStatus() == status)
+                    .toList();
+        } else {
+            filteredBooks = allBooks;
+        }
+
+        model.addAttribute("books", filteredBooks);
+        model.addAttribute("status", status);
+
+        model.addAttribute("totalCount", totalCount);
+        model.addAttribute("wishCount", wishCount);
+        model.addAttribute("readingCount", readingCount);
+        model.addAttribute("doneCount", doneCount);
+
         return "books/books";
     }
 
