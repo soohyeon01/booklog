@@ -7,17 +7,36 @@
 </head>
 <body>
 
-<header>
-    <h1>📚 나의 책장 (v1.0)</h1>
-    <a th:href="@{/}">🏠 홈으로 가기</a>
-</header>
-
+<header th:replace="~{fragment/base :: mainHeader('📚 나의 책장 (v1.2)')}"></header>
 <main>
     <section>
         <h2>등록된 도서 목록</h2>
 
-        <button type="button" th:onclick="|location.href='@{/books/add}'|">➕ 새 책 등록하기</button>
+        <div style="margin-bottom: 20px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ddd;">
+            <a th:href="@{/books}"
+               th:style="${currentStatus == null} ? 'font-weight: bold; color: blue; margin-right: 15px;' : 'margin-right: 15px;'">
+                전체보기(<span th:text="${totalCount}">0</span>)
+            </a>
 
+            <a th:href="@{/books(status='WISH')}"
+               th:style="${currentStatus?.name() == 'WISH'} ? 'font-weight: bold; color: blue; margin-right: 15px;' : 'margin-right: 15px;'">
+                읽고 싶은 책(<span th:text="${wishCount}">0</span>)
+            </a>
+
+            <a th:href="@{/books(status='READING')}"
+               th:style="${currentStatus?.name() == 'READING'} ? 'font-weight: bold; color: blue; margin-right: 15px;' : 'margin-right: 15px;'">
+                읽는 중(<span th:text="${readingCount}">0</span>)
+            </a>
+
+            <a th:href="@{/books(status='DONE')}"
+               th:style="${currentStatus?.name() == 'DONE'} ? 'font-weight: bold; color: blue;'">
+                완독(<span th:text="${doneCount}">0</span>)
+            </a>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <button type="button" th:onclick="|location.href='@{/books/add}'|">➕ 새 책 등록하기</button>
+        </div>
         <br><br>
 
         <table border="1">
@@ -42,9 +61,11 @@
                 <td th:text="${book.status.description}">읽는 중</td>
                 <td th:text="${#strings.repeat('⭐', book.rating)}">⭐⭐⭐⭐⭐</td>
                 <td>
-                    <form th:action="@{/books/{bookId}/delete(bookId=${book.id})}" method="post" style="display:inline;">
+                    <form th:action="@{/books/{bookId}/delete(bookId=${book.id})}" method="post"
+                          style="display:inline;">
                         <button type="submit" onclick="return confirm('정말 이 책을 삭제하시겠습니까?');"
-                        style="color: red; padding: 2px 5px;">삭제</button>
+                                style="color: red; padding: 2px 5px;">삭제
+                        </button>
                     </form>
                 </td>
             </tr>
@@ -55,10 +76,6 @@
         </table>
     </section>
 </main>
-
-<footer>
-    <p>© 2026 BookLog</p>
-</footer>
-
+<footer th:replace="~{fragment/base :: mainFooter}"></footer>
 </body>
 </html>
