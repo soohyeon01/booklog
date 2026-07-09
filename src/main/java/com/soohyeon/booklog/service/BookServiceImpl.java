@@ -16,9 +16,8 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
 
     @Override
-    public Long registerBook(Book book) {
-        Book savedBook = bookRepository.save(book);
-        return savedBook.getId();
+    public Book saveBook(Book book) {
+        return bookRepository.save(book);
     }
 
     @Override
