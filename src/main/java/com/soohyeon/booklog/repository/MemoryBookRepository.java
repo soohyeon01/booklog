@@ -34,7 +34,7 @@ public class MemoryBookRepository implements BookRepository {
         Collections.reverse(books);
         return books;
     }
-
+    
     @Override
     public void update(Long bookId, Book updateParam) {
         Book findBook = store.get(bookId);

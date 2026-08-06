@@ -12,5 +12,5 @@ public interface BookRepository {
     Optional<Book> findById(Long id);           // 단건 조회
     List<Book> findAll();                       // 전체 조회
     void update(Long bookId, Book updateParam); // 수정
-    void delete(Long bookId);                              // 삭제
+    void delete(Long bookId);                   // 삭제
 }
