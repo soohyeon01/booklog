@@ -12,24 +12,39 @@
     <section class="card shadow-sm p-4">
         <h2 class="mb-4 fw-bold text-dark">등록된 도서 목록</h2>
 
+        <!-- 1. 검색 폼 (현재 선택된 status를 hidden으로 유지하며 검색) -->
+        <form th:action="@{/books}" method="get" class="row mb-4">
+            <input type="hidden" name="status" th:value="${status}">
+
+            <div class="col">
+                <input type="text" name="keyword" class="form-control" placeholder="제목 또는 저자 검색" th:value="${keyword}">
+            </div>
+
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">검색</button>
+            </div>
+        </form>
+
+        <!-- 2. 상태 필터 버튼 그룹 (현재 검색어 keyword를 유지하면서 status 전환) -->
         <div class="btn-group w-100 mb-4" role="group" aria-label="Book status filter">
-            <a th:href="@{/books}"
-               th:class="${currentStatus == null} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
+            <!-- 전체보기 누르면 status 파라미터만 제거하고 keyword는 유지 -->
+            <a th:href="@{/books(keyword=${keyword})}"
+               th:class="${status == null} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
                 전체보기 (<span th:text="${totalCount}">0</span>)
             </a>
 
-            <a th:href="@{/books(status='WISH')}"
-               th:class="${currentStatus?.name() == 'WISH'} ? 'btn btn-warning text-white fw-bold' : 'btn btn-outline-secondary'">
+            <a th:href="@{/books(status='WISH', keyword=${keyword})}"
+               th:class="${status?.name() == 'WISH'} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
                 읽고 싶은 책 (<span th:text="${wishCount}">0</span>)
             </a>
 
-            <a th:href="@{/books(status='READING')}"
-               th:class="${currentStatus?.name() == 'READING'} ? 'btn btn-info text-white fw-bold' : 'btn btn-outline-secondary'">
+            <a th:href="@{/books(status='READING', keyword=${keyword})}"
+               th:class="${status?.name() == 'READING'} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
                 읽는 중 (<span th:text="${readingCount}">0</span>)
             </a>
 
-            <a th:href="@{/books(status='DONE')}"
-               th:class="${currentStatus?.name() == 'DONE'} ? 'btn btn-success fw-bold' : 'btn btn-outline-secondary'">
+            <a th:href="@{/books(status='DONE', keyword=${keyword})}"
+               th:class="${status?.name() == 'DONE'} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
                 완독 (<span th:text="${doneCount}">0</span>)
             </a>
         </div>

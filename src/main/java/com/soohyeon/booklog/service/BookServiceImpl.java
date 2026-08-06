@@ -1,6 +1,7 @@
 package com.soohyeon.booklog.service;
 
 import com.soohyeon.booklog.domain.Book;
+import com.soohyeon.booklog.domain.BookStatus;
 import com.soohyeon.booklog.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,38 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<Book> findBooks() {
         return bookRepository.findAll();
+    }
+
+    /**
+     * 키워드와 상태로 책을 검색하는 기능
+     * @param keyword
+     * @param status
+     * @return
+     */
+    @Override
+    public List<Book> searchBooks(String keyword, BookStatus status) {
+
+        List<Book> books = bookRepository.findAll();
+
+        if (status != null) {
+            books = books.stream()
+                    .filter(book -> book.getStatus() == status)
+                    .toList();
+        }
+
+        if (keyword != null && !keyword.isBlank()) {
+
+            // 검색어 앞뒤 공백 제거
+            keyword = keyword.trim();
+
+            String searchKeyword = keyword.toLowerCase();
+
+            books = books.stream()
+                    .filter(book -> book.getTitle().toLowerCase().contains(searchKeyword)
+                            || book.getAuthor().toLowerCase().contains(searchKeyword))
+                    .toList();
+        }
+        return books;
     }
 
     @Override

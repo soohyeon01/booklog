@@ -21,13 +21,18 @@ public class BookController {
     private final BookService bookService;
 
     /**
-     * 1. 도서 전체 목록 조회 및 필터링 (v1.2 대시보드 반영)
-     * URL: GET /books 또는 GET /books?status=READING
+     * 1. 도서 전체 목록 조회 및 필터링
+     * v1.2 대시보드 반영
+     * v1.3 검색 기능 추가
+     * 
      */
     @GetMapping
-    public String books(@RequestParam(value = "status", required = false) BookStatus status,
-                        Model model) {
+    public String books(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) BookStatus status,
+            Model model)  {
 
+        List<Book> books = bookService.searchBooks(keyword, status);
         List<Book> allBooks = bookService.findBooks();
 
         long totalCount = allBooks.size();
@@ -35,17 +40,9 @@ public class BookController {
         long readingCount = allBooks.stream().filter(b -> b.getStatus() == BookStatus.READING).count();
         long doneCount = allBooks.stream().filter(b -> b.getStatus() == BookStatus.DONE).count();
 
-        List<Book> filteredBooks;
-        if (status != null) {
-            filteredBooks = allBooks.stream()
-                    .filter(b -> b.getStatus() == status)
-                    .toList();
-        } else {
-            filteredBooks = allBooks;
-        }
-
-        model.addAttribute("books", filteredBooks);
+        model.addAttribute("books", books);
         model.addAttribute("status", status);
+        model.addAttribute("keyword", keyword); // 추가: View에서 검색창 input에 입력값 유지용, status와 keyword를 교집합 검색
 
         model.addAttribute("totalCount", totalCount);
         model.addAttribute("wishCount", wishCount);
@@ -119,17 +116,8 @@ public class BookController {
      */
     private Book optionalToBook(Long bookId) {
         Optional<Book> bookOptional = bookService.findByBookId(bookId);
-        Book book = bookOptional.orElseThrow(
+        return bookOptional.orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 도서 ID입니다: " + bookId));
-        return book;
     }
 
-
-    @PostConstruct
-    public void init() {
-        bookService.saveBook(new Book("데미안", "헤르만 헤세", BookStatus.READING, 5,
-                "새는 알에서 나오려고 투쟁한다.", "내면의 성장을 유도하는 최고의 책"));
-        bookService.saveBook(new Book("스프링 MVC 1편", "김영한", BookStatus.DONE, 3,
-                "스프링 웹 기술의 핵심을 배운다.", "HTTP 요청과 응답, MVC 구조를 완벽하게 이해함"));
-    }
 }
