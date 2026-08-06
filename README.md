@@ -18,21 +18,21 @@
 ---
 
 ### 🗺️ 프로젝트 마일스톤 (Milestones)
-🌱 v1.3 | Spring MVC 기능 고도화
+🌱 [v1.3 | Spring MVC 기능 고도화](docs/v1/requirements-v1.md)
 - Validation & BindingResult
 - 검색 / 정렬 / 페이징
 - 통계 대시보드
 - 등록일 및 UX 개선
   ⏳ 예정
 
-🔒 v2.0 | 세션 기반 인증 및 사용자 기능
+🔒 [v2.0 | 세션 기반 인증 및 사용자 기능](docs/requirements-v2.md)
 - 회원가입 / 로그인
 - Session
 - Interceptor
 - 사용자별 서재
   ⏳ 예정
 
-💾 v3.0 | JPA 영속성 모델링
+💾 [v3.0 | JPA 영속성 모델링](docs/requirements-v3.md)
 - JPA 적용
 - MySQL
 - Query 최적화
