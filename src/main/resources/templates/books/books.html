@@ -1,132 +1,133 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+    <!DOCTYPE html>
+    <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 
-<!-- 자바스크립트: 정렬 변경 시 hidden값 변경 후 검색 폼 제출 -->
-<script>
-    function changeSort(sortValue) {
-        document.getElementById('sortInput').value = sortValue;
-        document.getElementById('searchForm').submit();
-    }
-</script>
+    <head th:replace="~{fragment/base :: commonHead}">
+        <title>내 서재 - BookLog</title>
+    </head>
+    <body>
 
-<head th:replace="~{fragment/base :: commonHead}">
-    <title>내 서재 - BookLog</title>
-</head>
-<body>
+    <header th:replace="~{fragment/base :: mainHeader('나의 책장 (v1.2)')}"></header>
 
-<header th:replace="~{fragment/base :: mainHeader('나의 책장 (v1.2)')}"></header>
+    <main class="container my-5">
 
-<main class="container my-5">
+        <section class="card shadow-sm p-4">
+            <h2 class="mb-4 fw-bold text-dark">등록된 도서 목록</h2>
 
-    <section class="card shadow-sm p-4">
-        <h2 class="mb-4 fw-bold text-dark">등록된 도서 목록</h2>
+            <!-- 검색 폼 (현재 선택된 status를 hidden으로 유지하며 검색) -->
+            <form th:action="@{/books}" method="get" class="row mb-4" id="searchForm">
+                <input type="hidden" name="status" th:value="${status}">
+                <input type="hidden" name="sort" th:value="${sort}" id="sortInput">
 
-        <!-- 1. 검색 폼 (현재 선택된 status를 hidden으로 유지하며 검색) -->
-        <form th:action="@{/books}" method="get" class="row mb-4">
-            <input type="hidden" name="status" th:value="${status}">
-            <input type="hidden" name="sort" th:value="${sort}" id="sortInput">
+                <div class="col">
+                    <input type="text" name="keyword" class="form-control" placeholder="제목 또는 저자 검색" th:value="${keyword}">
+                </div>
 
-            <div class="col">
-                <input type="text" name="keyword" class="form-control" placeholder="제목 또는 저자 검색" th:value="${keyword}">
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">검색</button>
+                </div>
+            </form>
+
+            <!-- 상태 필터 버튼 그룹 (현재 검색어 keyword를 유지하면서 status 전환) -->
+            <div class="btn-group w-100 mb-4" role="group" aria-label="Book status filter">
+                <!-- 전체보기 누르면 status 파라미터만 제거하고 keyword, sort는 유지 -->
+                <a th:href="@{/books(keyword=${keyword}, sort=${sort})}"
+                   th:class="${status == null} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
+                    전체보기 (<span th:text="${totalCount}">0</span>)
+                </a>
+
+                <a th:href="@{/books(status='WISH', keyword=${keyword}, sort=${sort})}"
+                   th:class="${status?.name() == 'WISH'} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
+                    읽고 싶은 책 (<span th:text="${wishCount}">0</span>)
+                </a>
+
+                <a th:href="@{/books(status='READING', keyword=${keyword}, sort=${sort})}"
+                   th:class="${status?.name() == 'READING'} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
+                    읽는 중 (<span th:text="${readingCount}">0</span>)
+                </a>
+
+                <a th:href="@{/books(status='DONE', keyword=${keyword}, sort=${sort})}"
+                   th:class="${status?.name() == 'DONE'} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
+                    완독 (<span th:text="${doneCount}">0</span>)
+                </a>
             </div>
 
-            <div class="col-auto">
-                <button type="submit" class="btn btn-primary">검색</button>
+            <!-- v1.3 정렬 드롭다운 및 조회 건수 표시 -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="text-muted fs-7">
+                    총 <strong th:text="${#lists.size(books)}">0</strong>건의 도서가 조회되었습니다.
+                </div>
+                <div style="width: 160px;">
+                    <select class="form-select form-select-sm" onchange="changeSort(this.value)">
+                        <option value="id_desc" th:selected="${sort == 'id_desc' || sort == null}">최신순</option>
+                        <option value="id_asc" th:selected="${sort == 'id_asc'}">오래된순</option>
+                        <option value="title_desc" th:selected="${sort == 'title_desc'}">제목 내림차순</option>
+                        <option value="title_asc" th:selected="${sort == 'title_asc'}">제목 오름차순</option>
+                        <option value="rating_desc" th:selected="${sort == 'rating_desc'}">평점 높은순</option>
+                        <option value="rating_asc" th:selected="${sort == 'rating_asc'}">평점 낮은순</option>
+                    </select>
+                </div>
             </div>
-        </form>
 
-        <!-- 2. 상태 필터 버튼 그룹 (현재 검색어 keyword를 유지하면서 status 전환) -->
-        <div class="btn-group w-100 mb-4" role="group" aria-label="Book status filter">
-            <!-- 전체보기 누르면 status 파라미터만 제거하고 keyword는 유지 -->
-            <a th:href="@{/books(keyword=${keyword}, sort=${sort})}"
-               th:class="${status == null} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
-                전체보기 (<span th:text="${totalCount}">0</span>)
-            </a>
-
-            <a th:href="@{/books(status='WISH', keyword=${keyword}, sort=${sort})}"
-               th:class="${status?.name() == 'WISH'} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
-                읽고 싶은 책 (<span th:text="${wishCount}">0</span>)
-            </a>
-
-            <a th:href="@{/books(status='READING', keyword=${keyword}, sort=${sort})}"
-               th:class="${status?.name() == 'READING'} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
-                읽는 중 (<span th:text="${readingCount}">0</span>)
-            </a>
-
-            <a th:href="@{/books(status='DONE', keyword=${keyword}, sort=${sort})}"
-               th:class="${status?.name() == 'DONE'} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
-                완독 (<span th:text="${doneCount}">0</span>)
-            </a>
-        </div>
-
-        <!-- v1.3 정렬 드롭다운 -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="text-muted fs-7">
-                총 <strong th:text="${#lists.size(books)}">0</strong>건의 도서가 조회되었습니다.
+            <div class="d-flex justify-content-end mb-3">
+                <button type="button" class="btn btn-success fw-bold shadow-sm" th:onclick="|location.href='@{/books/add}'|">
+                    새 책 등록하기
+                </button>
             </div>
-<!-- TODO: 드롭다운 클릭시 검색 버튼을 누르지 않아도 정렬 기준 반영 될 수 있도록 변경-->
-            <div style="width: 160px;">
-                <select class="form-select form-select-sm" onchange="changeSort(this.value)">
-                    <option value="id_desc" th:selected="${sort == 'id_desc'}">최신순</option>
-                    <option value="id_asc" th:selected="${sort == 'id_asc'}">오래된순</option>
-                    <option value="title" th:selected="${sort == 'title'}">제목 오름차순</option>
-                    <option value="rating_desc" th:selected="${sort == 'rating_desc'}">평점 내림차순</option>
-                    <option value="rating_asc" th:selected="${sort == 'rating_asc'}">평점 오름차순</option>
-                </select>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle text-center border-top">
+                    <thead class="table-light text-secondary small text-uppercase">
+                    <tr>
+                        <th style="width: 8%;">ID</th>
+                        <th style="width: 32%; text-align: left;">제목</th>
+                        <th style="width: 20%;">저자</th>
+                        <th style="width: 15%;">독서 상태</th>
+                        <th style="width: 15%;">평점</th>
+                        <th style="width: 10%;">관리</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="book : ${books}">
+                        <td th:text="${book.id}" class="text-secondary small">1</td>
+                        <td style="text-align: left;">
+                            <a th:href="@{/books/{bookId}(bookId=${book.id})}" class="text-decoration-none fw-semibold text-primary" th:text="${book.title}">
+                                책 제목
+                            </a>
+                        </td>
+                        <td th:text="${book.author}">저자</td>
+                        <td>
+                            <span th:if="${book.status.name() == 'WISH'}" class="badge bg-warning text-white py-1 px-2">읽고 싶은</span>
+                            <span th:if="${book.status.name() == 'READING'}" class="badge bg-info text-white py-1 px-2">읽는 중</span>
+                            <span th:if="${book.status.name() == 'DONE'}" class="badge bg-success py-1 px-2">완독</span>
+                        </td>
+                        <td th:text="${#strings.repeat('⭐', book.rating)}" class="text-warning small">⭐⭐⭐⭐⭐</td>
+                        <td>
+                            <form th:action="@{/books/{bookId}/delete(bookId=${book.id})}" method="post" style="display:inline;">
+                                <button type="submit" onclick="return confirm('정말 이 책을 삭제하시겠습니까?');"
+                                        class="btn btn-sm btn-outline-danger py-1 px-2">
+                                    삭제
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(books)}">
+                        <td colspan="6" class="text-center py-4 text-muted">등록된 책이 없습니다. 책을 등록해 보세요!</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-        </div>
+        </section>
+    </main>
 
-        <div class="d-flex justify-content-end mb-3">
-            <button type="button" class="btn btn-success fw-bold shadow-sm" th:onclick="|location.href='@{/books/add}'|">
-                새 책 등록하기
-            </button>
-        </div>
+    <footer th:replace="~{fragment/base :: mainFooter}"></footer>
 
-        <div class="table-responsive">
-            <table class="table table-hover table-striped align-middle text-center border-top">
-                <thead class="table-light text-secondary small text-uppercase">
-                <tr>
-                    <th style="width: 8%;">ID</th>
-                    <th style="width: 32%; text-align: left;">제목</th>
-                    <th style="width: 20%;">저자</th>
-                    <th style="width: 15%;">독서 상태</th>
-                    <th style="width: 15%;">평점</th>
-                    <th style="width: 10%;">관리</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="book : ${books}">
-                    <td th:text="${book.id}" class="text-secondary small">1</td>
-                    <td style="text-align: left;">
-                        <a th:href="@{/books/{bookId}(bookId=${book.id})}" class="text-decoration-none fw-semibold text-primary" th:text="${book.title}">
-                            책 제목
-                        </a>
-                    </td>
-                    <td th:text="${book.author}">저자</td>
-                    <td>
-                        <span th:if="${book.status.name() == 'WISH'}" class="badge bg-warning text-white py-1 px-2">읽고 싶은</span>
-                        <span th:if="${book.status.name() == 'READING'}" class="badge bg-info text-white py-1 px-2">읽는 중</span>
-                        <span th:if="${book.status.name() == 'DONE'}" class="badge bg-success py-1 px-2">완독</span>
-                    </td>
-                    <td th:text="${#strings.repeat('⭐', book.rating)}" class="text-warning small">⭐⭐⭐⭐⭐</td>
-                    <td>
-                        <form th:action="@{/books/{bookId}/delete(bookId=${book.id})}" method="post" style="display:inline;">
-                            <button type="submit" onclick="return confirm('정말 이 책을 삭제하시겠습니까?');"
-                                    class="btn btn-sm btn-outline-danger py-1 px-2">
-                                삭제
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(books)}">
-                    <td colspan="6" class="text-center py-4 text-muted">등록된 책이 없습니다. 책을 등록해 보세요!</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-</main>
+    <!-- 자바스크립트: 정렬 변경 시 hidden값 변경 후 검색 폼 제출 -->
+    <script>
+        function changeSort(sortValue) {
+            document.getElementById('sortInput').value = sortValue;
+            document.getElementById('searchForm').submit();
+        }
+    </script>
 
-<footer th:replace="~{fragment/base :: mainFooter}"></footer>
-</body>
-</html>
+    </body>
+    </html>
