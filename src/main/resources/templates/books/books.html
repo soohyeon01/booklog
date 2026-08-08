@@ -1,5 +1,14 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<!-- 자바스크립트: 정렬 변경 시 hidden값 변경 후 검색 폼 제출 -->
+<script>
+    function changeSort(sortValue) {
+        document.getElementById('sortInput').value = sortValue;
+        document.getElementById('searchForm').submit();
+    }
+</script>
+
 <head th:replace="~{fragment/base :: commonHead}">
     <title>내 서재 - BookLog</title>
 </head>
@@ -15,6 +24,7 @@
         <!-- 1. 검색 폼 (현재 선택된 status를 hidden으로 유지하며 검색) -->
         <form th:action="@{/books}" method="get" class="row mb-4">
             <input type="hidden" name="status" th:value="${status}">
+            <input type="hidden" name="sort" th:value="${sort}" id="sortInput">
 
             <div class="col">
                 <input type="text" name="keyword" class="form-control" placeholder="제목 또는 저자 검색" th:value="${keyword}">
@@ -28,25 +38,42 @@
         <!-- 2. 상태 필터 버튼 그룹 (현재 검색어 keyword를 유지하면서 status 전환) -->
         <div class="btn-group w-100 mb-4" role="group" aria-label="Book status filter">
             <!-- 전체보기 누르면 status 파라미터만 제거하고 keyword는 유지 -->
-            <a th:href="@{/books(keyword=${keyword})}"
+            <a th:href="@{/books(keyword=${keyword}, sort=${sort})}"
                th:class="${status == null} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
                 전체보기 (<span th:text="${totalCount}">0</span>)
             </a>
 
-            <a th:href="@{/books(status='WISH', keyword=${keyword})}"
+            <a th:href="@{/books(status='WISH', keyword=${keyword}, sort=${sort})}"
                th:class="${status?.name() == 'WISH'} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
                 읽고 싶은 책 (<span th:text="${wishCount}">0</span>)
             </a>
 
-            <a th:href="@{/books(status='READING', keyword=${keyword})}"
+            <a th:href="@{/books(status='READING', keyword=${keyword}, sort=${sort})}"
                th:class="${status?.name() == 'READING'} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
                 읽는 중 (<span th:text="${readingCount}">0</span>)
             </a>
 
-            <a th:href="@{/books(status='DONE', keyword=${keyword})}"
+            <a th:href="@{/books(status='DONE', keyword=${keyword}, sort=${sort})}"
                th:class="${status?.name() == 'DONE'} ? 'btn btn-primary fw-bold' : 'btn btn-outline-secondary'">
                 완독 (<span th:text="${doneCount}">0</span>)
             </a>
+        </div>
+
+        <!-- v1.3 정렬 드롭다운 -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="text-muted fs-7">
+                총 <strong th:text="${#lists.size(books)}">0</strong>건의 도서가 조회되었습니다.
+            </div>
+<!-- TODO: 드롭다운 클릭시 검색 버튼을 누르지 않아도 정렬 기준 반영 될 수 있도록 변경-->
+            <div style="width: 160px;">
+                <select class="form-select form-select-sm" onchange="changeSort(this.value)">
+                    <option value="id_desc" th:selected="${sort == 'id_desc'}">최신순</option>
+                    <option value="id_asc" th:selected="${sort == 'id_asc'}">오래된순</option>
+                    <option value="title" th:selected="${sort == 'title'}">제목 오름차순</option>
+                    <option value="rating_desc" th:selected="${sort == 'rating_desc'}">평점 내림차순</option>
+                    <option value="rating_asc" th:selected="${sort == 'rating_asc'}">평점 오름차순</option>
+                </select>
+            </div>
         </div>
 
         <div class="d-flex justify-content-end mb-3">

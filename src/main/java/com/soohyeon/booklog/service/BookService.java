@@ -11,7 +11,7 @@ public interface BookService {
     Book saveBook(Book book);
     Optional<Book> findByBookId(Long id);
     List<Book> findBooks();
-    List<Book> searchBooks(String keyword, BookStatus status);
+    List<Book> searchBooks(BookStatus status, String keyword, String sort);
     void updateBook(Long bookId, Book updateParam);
     void removeBook(Long bookId);
 }

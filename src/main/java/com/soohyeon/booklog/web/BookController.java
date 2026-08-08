@@ -30,9 +30,10 @@ public class BookController {
     public String books(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) BookStatus status,
+            @RequestParam(required = false, defaultValue = "id_desc") String sort,
             Model model)  {
 
-        List<Book> books = bookService.searchBooks(keyword, status);
+        List<Book> books = bookService.searchBooks(status, keyword, sort);
         List<Book> allBooks = bookService.findBooks();
 
         long totalCount = allBooks.size();
@@ -43,6 +44,7 @@ public class BookController {
         model.addAttribute("books", books);
         model.addAttribute("status", status);
         model.addAttribute("keyword", keyword); // 추가: View에서 검색창 input에 입력값 유지용, status와 keyword를 교집합 검색
+        model.addAttribute("sort", sort);
 
         model.addAttribute("totalCount", totalCount);
         model.addAttribute("wishCount", wishCount);
