@@ -3,10 +3,13 @@ package com.soohyeon.booklog.web;
 import com.soohyeon.booklog.domain.Book;
 import com.soohyeon.booklog.domain.BookStatus;
 import com.soohyeon.booklog.service.BookService;
-import jakarta.annotation.PostConstruct;
+import com.soohyeon.booklog.web.form.BookForm;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -16,6 +19,7 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/books")
 @RequiredArgsConstructor
+@Slf4j
 public class BookController {
 
     private final BookService bookService;
@@ -56,19 +60,33 @@ public class BookController {
 
     // 2-1
     @GetMapping("/add")
-    public String addForm() {
+    public String addForm(Model model) {
+        model.addAttribute("book", new BookForm());
         return "books/addForm";
     }
 
     /**
-     * 2-2
-     * v1.1: 메세지 커스텀
-     * 변수를 url에 직접 더해서 쓰는 경우,
-     * 데이터에 한글, 공백, 특수문자가 사용된 경우 URL 인코딩이 깨지므로
-     * 현재의 방법을 사용하는 편이 좋음
+     * v1.4 add, edit 검증 기능 추가
      */
     @PostMapping("/add")
-    public String add(@ModelAttribute("book") Book book, RedirectAttributes redirectAttributes) {
+    public String add(@Validated @ModelAttribute("book") BookForm form,
+                      BindingResult bindingResult,
+                      RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            log.info("errors={}", bindingResult);
+            return "books/addForm";
+        }
+
+        Book book = new Book();
+        book.setTitle(form.getTitle());
+        book.setAuthor(form.getAuthor());
+        book.setStatus(form.getStatus());
+        book.setRating(form.getRating());
+        book.setSummary(form.getSummary());
+        book.setMemo(form.getMemo());
+
+        // 성공 로직
         Book savedBook = bookService.saveBook(book);
         redirectAttributes.addAttribute("bookId", savedBook.getId());
         redirectAttributes.addFlashAttribute("message", "책이 성공적으로 등록되었습니다!");
@@ -88,19 +106,48 @@ public class BookController {
     @GetMapping("/{bookId}/edit")
     public String editForm(@PathVariable Long bookId, Model model) {
         Book book = optionalToBook(bookId);
-        model.addAttribute("book", book);
+
+        BookForm form = new BookForm();
+        form.setTitle(book.getTitle());
+        form.setAuthor(book.getAuthor());
+        form.setStatus(book.getStatus());
+        form.setRating(book.getRating());
+        form.setSummary(book.getSummary());
+        form.setMemo(book.getMemo());
+
+        model.addAttribute("book", form);
+        model.addAttribute("bookId", bookId);
 
         return "books/editForm";
     }
 
     // 4-2
-    // v1.1 메세지 커스텀
     @PostMapping("/{bookId}/edit")
-    public String edit(@PathVariable Long bookId, @ModelAttribute Book updateParam, RedirectAttributes redirectAttributes) {
-        bookService.updateBook(bookId, updateParam);
-        redirectAttributes.addAttribute("bookId", bookId);
+    public String edit(@PathVariable Long bookId,
+                       @Validated @ModelAttribute("book") BookForm form,
+                       BindingResult bindingResult,
+                       Model model,
+                       RedirectAttributes redirectAttributes) {
 
+        if (bindingResult.hasErrors()) {
+            log.info("errors={}", bindingResult);
+            model.addAttribute("bookId", bookId);
+            return "books/editForm";
+        }
+
+        Book updateParam = new Book();
+        updateParam.setTitle(form.getTitle());
+        updateParam.setAuthor(form.getAuthor());
+        updateParam.setStatus(form.getStatus());
+        updateParam.setRating(form.getRating());
+        updateParam.setSummary(form.getSummary());
+        updateParam.setMemo(form.getMemo());
+
+        bookService.updateBook(bookId, updateParam);
+
+        redirectAttributes.addAttribute("bookId", bookId);
         redirectAttributes.addFlashAttribute("message", "정보가 정상적으로 수정되었습니다!");
+
         return "redirect:/books/{bookId}";
     }
 

@@ -5,10 +5,17 @@
     <meta charset="UTF-8">
     <link href="../css/bootstrap.min.css"
           th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+    <style>
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
 </head>
 
 <header th:fragment="mainHeader(title)">
-    <h1 th:text="${title}">BookLog v1.2</h1>
+    <h1 th:text="${title}">BookLog v1.4</h1>
     <hr>
 </header>
 

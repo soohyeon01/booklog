@@ -40,9 +40,12 @@
                 <div class="row">
                     <div class="col-sm-3 text-secondary fw-semibold">독서 상태</div>
                     <div class="col-sm-9">
-                        <span th:if="${book.status.name() == 'WISH'}" class="badge bg-warning text-white py-2 px-3 fw-bold">읽고 싶은 책</span>
-                        <span th:if="${book.status.name() == 'READING'}" class="badge bg-info text-white py-2 px-3 fw-bold">읽는 중</span>
-                        <span th:if="${book.status.name() == 'DONE'}" class="badge bg-success py-2 px-3 fw-bold">완독</span>
+                        <span th:if="${book.status.name() == 'WISH'}"
+                              class="badge bg-warning text-white py-2 px-3 fw-bold">읽고 싶은 책</span>
+                        <span th:if="${book.status.name() == 'READING'}"
+                              class="badge bg-info text-white py-2 px-3 fw-bold">읽는 중</span>
+                        <span th:if="${book.status.name() == 'DONE'}"
+                              class="badge bg-success py-2 px-3 fw-bold">완독</span>
                     </div>
                 </div>
             </div>
@@ -50,7 +53,9 @@
             <div class="list-group-item py-3">
                 <div class="row">
                     <div class="col-sm-3 text-secondary fw-semibold">평점</div>
-                    <div class="col-sm-9 text-warning fs-5" th:text="${#strings.repeat('⭐', book.rating)}">⭐⭐⭐⭐⭐</div>
+                    <div class="col-sm-9 text-warning fs-5"
+                         th:if="${book.rating != null}"
+                         th:text="${#strings.repeat('⭐', book.rating)}">⭐⭐⭐⭐⭐</div>
                 </div>
             </div>
 
@@ -65,7 +70,8 @@
                 <div class="row">
                     <div class="col-sm-3 text-secondary fw-semibold">상세 메모</div>
                     <div class="col-sm-9">
-                        <div class="bg-light p-3 rounded border text-dark" style="min-height: 100px; white-space: pre-wrap;" th:text="${book.memo}">
+                        <div class="bg-light p-3 rounded border text-dark"
+                             style="min-height: 100px; white-space: pre-wrap;" th:text="${book.memo}">
                             싱클레어가 크로머를 만나고...
                         </div>
                     </div>
@@ -77,17 +83,20 @@
         <hr class="my-4">
 
         <div class="d-flex justify-content-between align-items-center">
-            <button type="button" class="btn btn-outline-secondary px-3 fw-bold" th:onclick="|location.href='@{/books}'|">
+            <button type="button" class="btn btn-outline-secondary px-3 fw-bold"
+                    th:onclick="|location.href='@{/books}'|">
                 목록으로
             </button>
 
             <div class="d-flex gap-2">
-                <button type="button" class="btn btn-primary px-3 fw-bold shadow-sm" th:onclick="|location.href='@{/books/{bookId}/edit(bookId=${book.id})}'|">
+                <button type="button" class="btn btn-primary px-3 fw-bold shadow-sm"
+                        th:onclick="|location.href='@{/books/{bookId}/edit(bookId=${book.id})}'|">
                     수정하기
                 </button>
 
                 <form th:action="@{/books/{bookId}/delete(bookId=${book.id})}" method="post" style="display:inline;">
-                    <button type="submit" onclick="return confirm('정말 이 책을 삭제하시겠습니까?');" class="btn btn-outline-danger px-3 fw-bold">
+                    <button type="submit" onclick="return confirm('정말 이 책을 삭제하시겠습니까?');"
+                            class="btn btn-outline-danger px-3 fw-bold">
                         삭제하기
                     </button>
                 </form>

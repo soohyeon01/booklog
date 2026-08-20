@@ -2,6 +2,14 @@
 
 ### 🟡 예정된 기능 (To-Do) -> 🟢 모두 완료 (Done)
 
+### 2026.08.20 (Thu)
+- [v1.4-validation] Spring Validation 적용 및 입력 DTO 분리
+  - [x] `BookForm` DTO 분리: 도메인 객체 `Book`과 사용자 입력 데이터의 역할을 분리하고, 등록/수정 과정에서 검증 전용 DTO 사용
+  - [x] Bean Validation 적용: `@NotBlank`, `@NotNull`, `@Size`, `@Min`, `@Max`를 활용하여 도서 입력값에 대한 서버 측 검증 구현
+  - [x] `@Validated` + `BindingResult`를 활용한 Controller 검증 흐름 구축
+  - [x] 검증 실패 시 입력 화면으로 재전송하여 사용자가 입력한 데이터와 오류 메시지를 유지
+  - [x] 등록/수정 폼 Validation 구조 통일: `BookForm`을 공통 입력 DTO로 활용하여 동일한 검증 규칙 적용
+
 ### 2026.08.08 (Sat)
 - [v1.3-Sort] 다중 정렬 기능 구현 및 UI/UX 고도화
   - [x] 다양한 정렬 기준 지원: 최신순(`id_desc`), 오래된순(`id_asc`), 제목 내림/올림차순(`title_desc`/`title_asc`), 평점 높은/낮은순(`rating_desc`/`rating_asc`) 6종 정렬 조건 구현
@@ -68,3 +76,26 @@
     - View의 검색 Form에 `<input type="hidden" name="status" th:value="${status}">`를 배치하고, 상태 버튼 쿼리 스트링에 `keyword`를 함께 바인딩(`th:href="@{/books(status='DONE', keyword=${keyword})}"`)하여 검색 조건과 필터 조건이 동적으로 보존되도록 개선.
 - **성과 및 배운 점**
   - 단순 기능 추가를 넘어, 사용자 동선(UX) 관점에서 쿼리 파라미터가 끊기지 않도록 설계하는 '상태 유지'의 중요성을 체감함.
+
+### 📌 2026.08.20 - Validation DTO 적용 후 수정 페이지 500 오류
+- **증상**: 수정 페이지 진입 시 `SpelEvaluationException` 발생.
+- **원인**:
+  - 기존 수정 폼에서는 `Book` 객체를 View에 전달하여 `${book.id}`를 사용하고 있었으나, Validation 적용 과정에서 View의 `book` 객체를 `BookForm`으로 변경함.
+  - `BookForm`에는 `id` 필드가 존재하지 않아 Thymeleaf가 `${book.id}` 프로퍼티를 찾지 못함.
+- **해결**:
+  - 수정 폼의 입력 데이터는 `BookForm`으로 유지하고, 수정 대상 도서의 식별자는 URL의 `@PathVariable`로 관리하도록 역할 분리.
+  - `th:field="*{...}"`는 `BookForm`의 필드에만 사용하도록 수정.
+  - 기존 `book.id` 참조 코드를 제거하여 DTO와 View의 데이터 구조를 일치시킴.
+- **성과 및 배운 점**
+  - 검증용 DTO를 도입할 경우 기존 도메인 객체를 직접 참조하던 View 코드도 함께 변경해야 함을 확인.
+  - DTO의 역할을 '사용자 입력값 전달 및 검증'으로 명확하게 분리하고, 도메인 객체와의 변환 시점을 Controller에서 관리하는 구조를 확립함.
+
+### 📌 2026.08.20 - 선택형 평점의 null 값 처리 오류
+- **증상**: 등록 과정에서 평점을 선택하지 않아 `rating = null`로 저장된 도서가 수정 화면에서 진입 시 강제로 선텍해야 하는 상황 발생.
+- **원인**:
+  - 수정 폼의 `<select>`에 `rating = null`과 대응되는 선택지가 존재하지 않아 브라우저가 첫 번째 옵션을 기본 선택함.
+- **해결**:
+  - `<option value="">평점을 선택하세요</option>`을 추가하여 `null` 상태를 명시적으로 표현하도록 수정.
+  - `th:field="*{rating}"`를 통해 기존 평점이 존재하는 경우 해당 값이 자동으로 선택되도록 구성.
+- **성과 및 배운 점**
+  - Thymeleaf의 `th:field`를 활용하면서도 실제 HTML의 기본 선택 동작까지 고려해야 함을 학습함.

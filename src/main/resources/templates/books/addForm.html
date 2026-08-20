@@ -1,81 +1,163 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragment/base :: commonHead}">
     <title>새 책 등록 - BookLog</title>
 </head>
+
 <body>
 
-<header th:replace="~{fragment/base :: mainHeader('새 책 등록하기 (v1.2)')}"></header>
+<header th:replace="~{fragment/base :: mainHeader('새 책 등록하기 (v1.4)')}"></header>
 
 <main class="container my-5" style="max-width: 600px;">
 
     <section class="card shadow-sm p-4">
         <h3 class="mb-4 fw-bold text-dark border-bottom pb-2">새 도서 정보 입력</h3>
 
-        <form th:action="@{/books/add}" method="post">
+        <form th:action="@{/books/add}" th:object="${book}" method="post">
 
+            <!-- 제목 -->
             <div class="mb-3">
-                <label for="title" class="form-label fw-semibold">제목 <span class="text-danger">*</span></label>
-                <input type="text" id="title" name="title" class="form-control" required placeholder="책 제목을 입력하세요">
-            </div>
-
-            <div class="mb-3">
-                <label for="author" class="form-label fw-semibold">저자</label>
-                <input type="text" id="author" name="author" class="form-control" placeholder="저자 이름을 입력하세요">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label d-block fw-semibold">독서 상태</label>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="statusWish" name="status" value="WISH" checked>
-                    <label class="form-check-label" for="statusWish">읽고 싶은 책</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="statusReading" name="status" value="READING">
-                    <label class="form-check-label" for="statusReading">읽는 중</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" id="statusDone" name="status" value="DONE">
-                    <label class="form-check-label" for="statusDone">완독</label>
+                <label for="title" class="form-label fw-semibold">
+                    제목<span class="text-danger">*</span>
+                </label>
+                <input type="text" id="title" th:field="*{title}" th:errorclass="field-error"
+                       class="form-control" placeholder="책 제목을 입력하세요">
+                <div class="field-error" th:errors="*{title}">
+                    제목 오류
                 </div>
             </div>
 
+            <!-- 저자 -->
             <div class="mb-3">
-                <label for="rating" class="form-label fw-semibold">평점</label>
-                <select id="rating" name="rating" class="form-select">
+                <label for="author" class="form-label fw-semibold">
+                    저자<span class="text-danger">*</span>
+                </label>
+                <input type="text" id="author" th:field="*{author}" th:errorclass="field-error"
+                       class="form-control" placeholder="저자 이름을 입력하세요">
+
+                <div class="field-error" th:errors="*{author}">
+                    저자 오류
+                </div>
+            </div>
+
+            <!-- 독서 상태 -->
+            <div class="mb-3">
+                <label class="form-label d-block fw-semibold">
+                    독서 상태
+                </label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio"
+                           id="statusWish" th:field="*{status}" value="WISH">
+
+                    <label class="form-check-label" for="statusWish">
+                        읽고 싶은 책
+                    </label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio"
+                           id="statusReading" th:field="*{status}" value="READING">
+
+                    <label class="form-check-label" for="statusReading">
+                        읽는 중
+                    </label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio"
+                           id="statusDone" th:field="*{status}" value="DONE">
+
+                    <label class="form-check-label" for="statusDone">
+                        완독
+                    </label>
+                </div>
+
+                <div class="field-error" th:errors="*{status}">
+                    독서 상태 오류
+                </div>
+
+            </div>
+
+
+            <!-- 평점 -->
+            <div class="mb-3">
+
+                <label for="rating" class="form-label fw-semibold">
+                    평점
+                </label>
+
+                <select id="rating" th:field="*{rating}"
+                        th:errorclass="field-error" class="form-select">
+                    <!-- 평점은 선택사항 -->
+                    <option value="">평점을 선택하세요</option>
                     <option value="5">⭐⭐⭐⭐⭐ (5점)</option>
                     <option value="4">⭐⭐⭐⭐ (4점)</option>
                     <option value="3">⭐⭐⭐ (3점)</option>
                     <option value="2">⭐⭐ (2점)</option>
                     <option value="1">⭐ (1점)</option>
                 </select>
+
+                <div class="field-error" th:errors="*{rating}">
+                    평점 오류
+                </div>
+
             </div>
 
+
+            <!-- 한줄평 -->
             <div class="mb-3">
+
                 <label for="summary" class="form-label fw-semibold">한줄평</label>
-                <input type="text" id="summary" name="summary" class="form-control" placeholder="가벼운 소감을 적어주세요">
+
+                <input type="text" id="summary" th:field="*{summary}" th:errorclass="field-error"
+                       class="form-control" placeholder="가벼운 소감을 적어주세요">
+
+                <div class="field-error" th:errors="*{summary}">
+                    한줄평 오류
+                </div>
+
             </div>
 
+            <!-- 메모 -->
             <div class="mb-4">
-                <label for="memo" class="form-label fw-semibold">메모</label>
-                <textarea id="memo" name="memo" rows="5" class="form-control" placeholder="길게 남길 회고를 입력하세요"></textarea>
+
+                <label for="memo" class="form-label fw-semibold">
+                    메모
+                </label>
+
+                <textarea id="memo" th:field="*{memo}" th:errorclass="field-error" rows="5"
+                          class="form-control" placeholder="길게 남길 회고를 입력하세요"></textarea>
+
+                <div class="field-error" th:errors="*{memo}">
+                    메모 오류
+                </div>
+
             </div>
 
             <hr class="my-4">
 
+            <!-- 버튼 -->
             <div class="d-flex justify-content-end gap-2">
-                <button type="button" class="btn btn-outline-secondary px-4 fw-bold" th:onclick="|location.href='@{/books}'|">
+
+                <button type="button" class="btn btn-outline-secondary px-4 fw-bold"
+                        th:onclick="|location.href='@{/books}'|">
                     취소
                 </button>
+
                 <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">
                     등록하기
                 </button>
+
             </div>
 
         </form>
+
     </section>
+
 </main>
 
 <footer th:replace="~{fragment/base :: mainFooter}"></footer>
+
 </body>
 </html>
