@@ -6,12 +6,12 @@
 * **UI 포인트**: 부트스트랩 `table-hover` 및 상태별 컬러 배지(`badge`) 적용으로 시각적 피드백 강화.
 
 #### 🔗 [전체보기] 기본 대시보드 화면
-![01_main_list_all](./images/list.png)
+![01_main_list_all](images/1-2/list.png)
 
 #### 🔍 독서 상태별 동적 필터링 작동 화면 (Filter View)
 | 💛 읽고 싶은 책 필터링 (`WISH`) | 💚 완독 도서 필터링 (`DONE`) |
 | :---: | :---: |
-| <img src="./images/list_wish.png" width="100%"> | <img src="./images/list_done.png" width="100%"> |
+| <img src="./images/1-2/list_wish.png" width="100%"> | <img src="./images/1-2/list_done.png" width="100%"> |
 | *WISH 배지만 필터링되어 대시보드 활성화* | *DONE 배지만 필터링되어 대시보드 활성화* |
 
 ---
@@ -22,7 +22,7 @@
 
 | ➕ 새 책 등록하기 (`addForm.html`) | 📖 도서 상세 조회 (`book.html`) |
 | :---: | :---: |
-| <img src="./images/add.png" width="100%"> | <img src="./images/detail.png" width="100%"> |
+| <img src="./images/1-2/add.png" width="100%"> | <img src="./images/1-2/detail.png" width="100%"> |
 | *기존 테이블 구조를 탈피한 600px 슬림 카드 폼* | *상단 성공 알림 배너 및 정보 레이어 분리* |
 
 ---
@@ -33,7 +33,7 @@
 
 | ✏️ 기존 정보 수정 폼 (`editForm.html`) | ✨ 수정 완료 알림 및 상세 조회 (`book.html`) |
 | :---: | :---: |
-| <img src="./images/edit.png" width="100%"> | <img src="./images/edit_success.png" width="100%"> |
+| <img src="./images/1-2/edit.png" width="100%"> | <img src="./images/1-2/edit_success.png" width="100%"> |
 | *기존 도서 데이터가 온전히 동적 바인딩된 화면* | *수정 완료 후 상세 페이지로 리다이렉트되어 Alert 노출* |
 
 ---
@@ -43,7 +43,7 @@
 
 | 🔍 404 Not Found (페이지 없음) | 🔥 500 Internal Server Error (서버 오류) |
 | :---: | :---: |
-| <img src="./images/404.png" width="100%"> | <img src="./images/500.png" width="100%"> |
+| <img src="./images/1-2/404.png" width="100%"> | <img src="./images/1-2/500.png" width="100%"> |
 | *존재하지 않는 도서 ID 쿼리 시 대응* | *레포지토리 및 비즈니스 로직 예외 방어* |
 
 ---

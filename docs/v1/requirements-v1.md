@@ -81,5 +81,5 @@
 ---
 
 ### 🔗 관련 문서 바로가기
-* [🖼️ v1.2 결과 화면(Screenshots) 보러가기](./screenshots.md)
+* [🖼️ v1.2 결과 화면(Screenshots) 보러가기](./screenshots-v1.2)
 * [🏠 메인 README로 돌아가기](../../README.md)
