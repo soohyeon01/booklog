@@ -104,7 +104,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void removeBook(Long bookId, Long memberId) {
+    public void deleteBook(Long bookId, Long memberId) {
         bookRepository.findByIdAndMemberId(bookId, memberId)
                 .orElseThrow(() -> new IllegalArgumentException("본인 서재의 책만 삭제할 수 있습니다."));
         bookRepository.delete(bookId);

@@ -158,7 +158,7 @@ public class BookController {
     @PostMapping("{bookId}/delete")
     public String delete(@LoginMember Long memberId, @PathVariable Long bookId) {
 
-        bookService.removeBook(bookId, memberId);   // memberId 추가
+        bookService.deleteBook(bookId, memberId);   // memberId 추가
 
         return "redirect:/books";
     }

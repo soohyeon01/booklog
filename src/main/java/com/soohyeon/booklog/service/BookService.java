@@ -13,5 +13,5 @@ public interface BookService {
     List<Book> findBooks(Long memberId);
     List<Book> searchBooks(Long memberId, BookStatus status, String keyword, String sort);
     void updateBook(Long bookId, Long memberId, Book updateParam);
-    void removeBook(Long bookId, Long memberId);
+    void deleteBook(Long bookId, Long memberId);
 }
