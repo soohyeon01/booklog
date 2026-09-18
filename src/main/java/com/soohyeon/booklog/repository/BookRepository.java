@@ -11,6 +11,8 @@ public interface BookRepository {
     Book save(Book book);                       // 저장
     Optional<Book> findById(Long id);           // 단건 조회
     List<Book> findAll();                       // 전체 조회
+    List<Book> findAllByMemberId(Long memberId); // v2.0
+    Optional<Book> findByIdAndMemberId(Long id, Long memberId); // v2.0 - 타인 접근 제한용 메서드
     void update(Long bookId, Book updateParam); // 수정
     void delete(Long bookId);                   // 삭제
 }

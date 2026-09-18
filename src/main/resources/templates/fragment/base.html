@@ -15,7 +15,28 @@
 </head>
 
 <header th:fragment="mainHeader(title)">
-    <h1 th:text="${title}">BookLog v1.4</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>
+            <span th:text="${title}">BookLog</span>
+            <span th:text="'(' + ${booklogVersion} + ')'"> (v1.4)</span>
+        </h1>
+        <div>
+            <!-- 로그인한 경우 -->
+            <div th:if="${isLoggedIn}" class="d-flex align-items-center gap-2">
+
+                <!-- 로그인 페이지가 아닐 때만 회원 정보 표시 -->
+                <span class="text-muted fw-semibold" th:if="${title != '로그인'}">
+                    <span th:text="${loginMember.name}">사용자</span>님
+                </span>
+
+                <form th:if="${title != '로그인'}" th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary"> 로그아웃</button>
+                </form>
+            </div>
+            <!-- 로그인하지 않은 경우 -->
+            <a th:if="${!isLoggedIn && title != '로그인'}" th:href="@{/login}"
+               class="btn btn-sm btn-outline-primary"> 로그인 </a></div>
+    </div>
     <hr>
 </header>
 

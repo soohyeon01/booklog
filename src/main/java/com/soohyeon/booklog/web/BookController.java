@@ -3,6 +3,7 @@ package com.soohyeon.booklog.web;
 import com.soohyeon.booklog.domain.Book;
 import com.soohyeon.booklog.domain.BookStatus;
 import com.soohyeon.booklog.service.BookService;
+import com.soohyeon.booklog.web.argumentresolver.LoginMember;
 import com.soohyeon.booklog.web.form.BookForm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,17 +29,17 @@ public class BookController {
      * 1. 도서 전체 목록 조회 및 필터링
      * v1.2 대시보드 반영
      * v1.3 검색 기능 추가
-     * 
      */
     @GetMapping
     public String books(
+            @LoginMember Long memberId,
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) BookStatus status,
             @RequestParam(required = false, defaultValue = "id_desc") String sort,
-            Model model)  {
+            Model model) {
 
-        List<Book> books = bookService.searchBooks(status, keyword, sort);
-        List<Book> allBooks = bookService.findBooks();
+        List<Book> books = bookService.searchBooks(memberId, status, keyword, sort);
+        List<Book> allBooks = bookService.findBooks(memberId);
 
         long totalCount = allBooks.size();
         long wishCount = allBooks.stream().filter(b -> b.getStatus() == BookStatus.WISH).count();
@@ -69,7 +70,8 @@ public class BookController {
      * v1.4 add, edit 검증 기능 추가
      */
     @PostMapping("/add")
-    public String add(@Validated @ModelAttribute("book") BookForm form,
+    public String add(@LoginMember Long memberId,
+                      @Validated @ModelAttribute("book") BookForm form,
                       BindingResult bindingResult,
                       RedirectAttributes redirectAttributes) {
 
@@ -87,7 +89,7 @@ public class BookController {
         book.setMemo(form.getMemo());
 
         // 성공 로직
-        Book savedBook = bookService.saveBook(book);
+        Book savedBook = bookService.saveBook(book, memberId);
         redirectAttributes.addAttribute("bookId", savedBook.getId());
         redirectAttributes.addFlashAttribute("message", "책이 성공적으로 등록되었습니다!");
         return "redirect:/books/{bookId}";
@@ -95,8 +97,8 @@ public class BookController {
 
     // 3
     @GetMapping("/{bookId}")
-    public String book(@PathVariable Long bookId, Model model) {
-        Book book = optionalToBook(bookId);
+    public String book(@LoginMember Long memberId, @PathVariable Long bookId, Model model) {
+        Book book = optionalToBook(bookId, memberId);
         model.addAttribute("book", book);
 
         return "/books/book";
@@ -104,8 +106,8 @@ public class BookController {
 
     // 4-1
     @GetMapping("/{bookId}/edit")
-    public String editForm(@PathVariable Long bookId, Model model) {
-        Book book = optionalToBook(bookId);
+    public String editForm(@LoginMember Long memberId, @PathVariable Long bookId, Model model) {
+        Book book = optionalToBook(bookId, memberId);   // memberId 추가
 
         BookForm form = new BookForm();
         form.setTitle(book.getTitle());
@@ -123,7 +125,8 @@ public class BookController {
 
     // 4-2
     @PostMapping("/{bookId}/edit")
-    public String edit(@PathVariable Long bookId,
+    public String edit(@LoginMember Long memberId,
+                       @PathVariable Long bookId,
                        @Validated @ModelAttribute("book") BookForm form,
                        BindingResult bindingResult,
                        Model model,
@@ -143,7 +146,7 @@ public class BookController {
         updateParam.setSummary(form.getSummary());
         updateParam.setMemo(form.getMemo());
 
-        bookService.updateBook(bookId, updateParam);
+        bookService.updateBook(bookId,memberId, updateParam);   // memberId 추가
 
         redirectAttributes.addAttribute("bookId", bookId);
         redirectAttributes.addFlashAttribute("message", "정보가 정상적으로 수정되었습니다!");
@@ -153,9 +156,9 @@ public class BookController {
 
     // 5
     @PostMapping("{bookId}/delete")
-    public String delete(@PathVariable Long bookId) {
+    public String delete(@LoginMember Long memberId, @PathVariable Long bookId) {
 
-        bookService.removeBook(bookId);
+        bookService.removeBook(bookId, memberId);   // memberId 추가
 
         return "redirect:/books";
     }
@@ -163,8 +166,8 @@ public class BookController {
     /**
      * 옵셔널을 검증하여 Book 객체로 변환하는 메서드
      */
-    private Book optionalToBook(Long bookId) {
-        Optional<Book> bookOptional = bookService.findByBookId(bookId);
+    private Book optionalToBook(Long bookId, Long memberId) {
+        Optional<Book> bookOptional = bookService.findByBookId(bookId, memberId);
         return bookOptional.orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 도서 ID입니다: " + bookId));
     }

@@ -11,6 +11,7 @@ import lombok.Setter;
 public class Book {
 
     private Long id;        // 자동 발급 고유 번호
+    private Long memberId;  // v2.0 - 사용자 id
     private String title;   // 필수 입력값
     private String author;
     private BookStatus status;

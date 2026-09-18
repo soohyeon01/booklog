@@ -34,7 +34,31 @@ public class MemoryBookRepository implements BookRepository {
         Collections.reverse(books);
         return books;
     }
-    
+
+    // v2.0
+    @Override
+    public List<Book> findAllByMemberId(Long memberId) {
+        return store.values().stream()
+                .filter(book -> book.getMemberId().equals(memberId))
+                .sorted(Comparator.comparing(Book::getId).reversed())
+                .toList();
+    }
+
+    /**
+     * v2.0
+     *
+     * @param id
+     * @param memberId
+     * @return
+     *
+     * select * from book where id = ? and member_id = ?
+     *
+     */
+    @Override
+    public Optional<Book> findByIdAndMemberId(Long id, Long memberId) {
+        return findById(id).filter(book -> book.getMemberId().equals(memberId));
+    }
+
     @Override
     public void update(Long bookId, Book updateParam) {
         Book findBook = store.get(bookId);

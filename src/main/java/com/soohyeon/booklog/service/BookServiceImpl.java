@@ -18,18 +18,19 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
 
     @Override
-    public Book saveBook(Book book) {
+    public Book saveBook(Book book, Long memberId) {
+        book.setMemberId(memberId);
         return bookRepository.save(book);
     }
 
     @Override
-    public Optional<Book> findByBookId(Long id) {
-        return bookRepository.findById(id);
+    public Optional<Book> findByBookId(Long id, Long memberId) {
+        return bookRepository.findByIdAndMemberId(id, memberId);
     }
 
     @Override
-    public List<Book> findBooks() {
-        return bookRepository.findAll();
+    public List<Book> findBooks(Long memberId) {
+        return bookRepository.findAllByMemberId(memberId);
     }
 
     /**
@@ -39,12 +40,11 @@ public class BookServiceImpl implements BookService {
      * @return
      */
     @Override
-    public List<Book> searchBooks(BookStatus status, String keyword, String sort) {
-
+    public List<Book> searchBooks(Long memberId, BookStatus status, String keyword, String sort) {
         Comparator<Book> comparator = getComparator(sort);
 
-        // 3개의 리스트 생성 스트림을 한 개로 통합
-        return bookRepository.findAll().stream()
+        // v2.0 - findAll() → findAllByMemberId()로만 바꿔주면 기존 필터/정렬 로직은 그대로 재사용
+        return bookRepository.findAllByMemberId(memberId).stream()
                 .filter(book -> filterByStatus(book, status))
                 .filter(book -> filterByKeyword(book, keyword))
                 .sorted(comparator)
@@ -94,14 +94,19 @@ public class BookServiceImpl implements BookService {
     }
 
 
+    /* update remove 할 때, 먼저 권한을 검증 */
 
     @Override
-    public void updateBook(Long bookId, Book updateParam) {
+    public void updateBook(Long bookId, Long memberId, Book updateParam) {
+        bookRepository.findByIdAndMemberId(bookId, memberId)
+                .orElseThrow(() -> new IllegalArgumentException("본인 서재의 책만 수정할 수 있습니다."));
         bookRepository.update(bookId, updateParam);
     }
 
     @Override
-    public void removeBook(Long bookId) {
+    public void removeBook(Long bookId, Long memberId) {
+        bookRepository.findByIdAndMemberId(bookId, memberId)
+                .orElseThrow(() -> new IllegalArgumentException("본인 서재의 책만 삭제할 수 있습니다."));
         bookRepository.delete(bookId);
     }
 }
