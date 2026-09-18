@@ -12,8 +12,8 @@
 
 기능 명세서와 개발일지, 최종 결과 화면은 아래 문서에서 확인하실 수 있습니다.
 
-* [📝 v1.4 스펙 명세서 & 개발 일지 보러가기](docs/v1/requirements-v1.md)
-* [🖼️ v1.4 최종 릴리즈 결과 화면](docs/v1/screenshots-v1.4.md)
+* [📝 v2.0 스펙 명세서 & 개발 일지 보러가기](docs/v2/requirements-v2.md)
+* [🖼️ v2.0 최종 릴리즈 결과 화면](docs/v2/screenshots-v2.md)
 
 ---
 
@@ -25,12 +25,11 @@
 - 등록일 및 UX 개선
   ⏳ 예정
 
-🔒 [v2.0 | 세션 기반 인증 및 사용자 기능](docs/requirements-v2.md)
+🔒 [v2.0 | 세션 기반 인증 및 사용자 기능](docs/v2/requirements-v2.md)
 - 회원가입 / 로그인
 - Session
 - Interceptor
 - 사용자별 서재
-  ⏳ 예정
 
 💾 [v3.0 | JPA 영속성 모델링](docs/requirements-v3.md)
 - JPA 적용
