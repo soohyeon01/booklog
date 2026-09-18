@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -29,7 +31,6 @@ public class BookServiceImplTest {
     private BookServiceImpl bookService;
 
     private final Long MY_MEMBER_ID = 1L;
-    private final Long OTHER_MEMBER_ID = 2L;
     private final Long BOOK_ID = 100L;
 
     @Test
@@ -57,7 +58,7 @@ public class BookServiceImplTest {
     void updateBook_success_Owner() {
 
         //given
-        Book myBook = creatBook(BOOK_ID, MY_MEMBER_ID);
+        Book myBook = createBook(BOOK_ID, MY_MEMBER_ID);
         given(bookRepository.findByIdAndMemberId(BOOK_ID, MY_MEMBER_ID))
                 .willReturn(Optional.of(myBook));
 
@@ -76,7 +77,7 @@ public class BookServiceImplTest {
     void deleteBook_success_Owner() {
 
         // given
-        Book myBook = creatBook(BOOK_ID, MY_MEMBER_ID);
+        Book myBook = createBook(BOOK_ID, MY_MEMBER_ID);
 
         given(bookRepository.findByIdAndMemberId(BOOK_ID, MY_MEMBER_ID))
                 .willReturn(Optional.of(myBook));
@@ -122,7 +123,7 @@ public class BookServiceImplTest {
     @DisplayName("본인 소유의 책을 조회할 수 있다.")
     void findByBookId_success_Owner() {
         // given
-        Book myBook = creatBook(BOOK_ID, MY_MEMBER_ID);
+        Book myBook = createBook(BOOK_ID, MY_MEMBER_ID);
 
         given(bookRepository.findByIdAndMemberId(BOOK_ID, MY_MEMBER_ID))
                 .willReturn(Optional.of(myBook));
@@ -151,8 +152,8 @@ public class BookServiceImplTest {
     void findBooks_returnsBooksByMemberId() {
         // given
         List<Book> myBooks = List.of(
-                creatBook(1L, MY_MEMBER_ID),
-                creatBook(2L, MY_MEMBER_ID)
+                createBook(1L, MY_MEMBER_ID),
+                createBook(2L, MY_MEMBER_ID)
         );
 
         given(bookRepository.findAllByMemberId(MY_MEMBER_ID))
@@ -198,7 +199,7 @@ public class BookServiceImplTest {
         assertThat(result.get(0).getTitle()).isEqualTo("이방인");
     }
 
-    private Book creatBook(Long id, Long memberId) {
+    private Book createBook(Long id, Long memberId) {
         Book book = new Book("제목", "저자", BookStatus.WISH, 5, "요약", "메모");
         book.setId(id);
         book.setMemberId(memberId);
