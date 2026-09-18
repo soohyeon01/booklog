@@ -59,6 +59,6 @@
 ---
 
 ### 🔗 관련 문서 바로가기
-* [🖼️ v2.0 결과 화면(Screenshots) 보러가기](screenshots-v2)
-* [🗺️ v2.0 개발 일지 보러가기](devlog-v2.md)
+* [🖼️ v2.0 결과 화면(Screenshots) 보러가기](screenshots-v2.md)
+* [🗺️ v2.0 개발 일지 보러가기](dev-log-v2.md)
 * [🏠 메인 README로 돌아가기](../../README.md)
