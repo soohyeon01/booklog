@@ -10,6 +10,7 @@ public interface BookRepository {
 
     Book save(Book book);                       // 저장
     Optional<Book> findById(Long id);           // 단건 조회
+    /* 권한 분리시 관리자 권한으로 findAll()을 사용해야하므로 남겨둠 */
     List<Book> findAll();                       // 전체 조회
     List<Book> findAllByMemberId(Long memberId); // v2.0
     Optional<Book> findByIdAndMemberId(Long id, Long memberId); // v2.0 - 타인 접근 제한용 메서드
