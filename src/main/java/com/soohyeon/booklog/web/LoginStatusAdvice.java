@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 /**
  * Spring Security 를 쓰지 않고 세션 로그인 방식을 사용하고 있으므로, 컨트롤러에서 model에 로그인 여부를 담아 넘기는 방식 선택
- * 
  * NOTE: 코드의 활용성을 생각해서 아래 두 메서드를 합칠지 그냥 둘지 고려
+ */
+
+/**
+ * @ControllerAdvice 사용 시, 특정 컨트롤러에 종속되지 않고 전역적으로 적용
+ * [예외 처리, 글로벌 바인딩/유효성 검사/ 모델 속성 설정]
  */
 @ControllerAdvice
 @RequiredArgsConstructor
