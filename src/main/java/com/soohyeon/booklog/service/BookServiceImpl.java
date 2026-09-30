@@ -5,6 +5,7 @@ import com.soohyeon.booklog.domain.BookStatus;
 import com.soohyeon.booklog.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -12,12 +13,13 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true) // 기본값은 읽기 전용으로
 public class BookServiceImpl implements BookService {
 
-    // 롬복의 자동 생성자 주입 사용
     private final BookRepository bookRepository;
 
     @Override
+    @Transactional
     public Book saveBook(Book book, Long memberId) {
         book.setMemberId(memberId);
         return bookRepository.save(book);
@@ -33,12 +35,7 @@ public class BookServiceImpl implements BookService {
         return bookRepository.findAllByMemberId(memberId);
     }
 
-    /**
-     * @param status
-     * @param keyword
-     * @param sort
-     * @return
-     */
+
     @Override
     public List<Book> searchBooks(Long memberId, BookStatus status, String keyword, String sort) {
         Comparator<Book> comparator = getComparator(sort);
@@ -77,18 +74,14 @@ public class BookServiceImpl implements BookService {
 
     /* 키워드 검색 조건 메서드 분리(제목, 저자 검색) */
     private boolean filterByKeyword(Book book, String keyword) {
-        if (keyword == null || keyword.isBlank()) {
-            return true;
-        }
+        if (keyword == null || keyword.isBlank()) return true;
+
         // 키워드 형식 단일화
         String searchKeyword = keyword.trim().toLowerCase();
-
         boolean matchTitle = book.getTitle() != null
                 && book.getTitle().toLowerCase().contains(searchKeyword);
-
         boolean matchAuthor = book.getAuthor() != null
                 && book.getAuthor().toLowerCase().contains(searchKeyword);
-
         return matchTitle || matchAuthor;
 
     }
@@ -97,16 +90,26 @@ public class BookServiceImpl implements BookService {
     /* update remove 할 때, 먼저 권한을 검증 */
 
     @Override
+    @Transactional
     public void updateBook(Long bookId, Long memberId, Book updateParam) {
-        bookRepository.findByIdAndMemberId(bookId, memberId)
+        Book book = bookRepository.findByIdAndMemberId(bookId, memberId)
                 .orElseThrow(() -> new IllegalArgumentException("본인 서재의 책만 수정할 수 있습니다."));
-        bookRepository.update(bookId, updateParam);
+
+        // 트랜잭션 커밋 시 Dirty Checking으로 자동 update
+        book.setTitle(updateParam.getTitle());
+        book.setAuthor(updateParam.getAuthor());
+        book.setStatus(updateParam.getStatus());
+        book.setRating(updateParam.getRating());
+        book.setSummary(updateParam.getSummary());
+        book.setMemo(updateParam.getMemo());
     }
 
     @Override
+    @Transactional
     public void deleteBook(Long bookId, Long memberId) {
-        bookRepository.findByIdAndMemberId(bookId, memberId)
+        Book book = bookRepository.findByIdAndMemberId(bookId, memberId)
                 .orElseThrow(() -> new IllegalArgumentException("본인 서재의 책만 삭제할 수 있습니다."));
-        bookRepository.delete(bookId);
+
+        bookRepository.delete(book);   // 기존 bookId를 파라미터로 받는 방식에서 Jpa 호환되는 파라미터로 변경
     }
 }

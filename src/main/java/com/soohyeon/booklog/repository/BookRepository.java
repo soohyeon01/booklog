@@ -1,19 +1,18 @@
 package com.soohyeon.booklog.repository;
 
 import com.soohyeon.booklog.domain.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
 // 추후 상위 버전과의 호환성을 위해 인터페이스로 설계
-public interface BookRepository {
+public interface BookRepository extends JpaRepository<Book, Long> {
 
-    Book save(Book book);                       // 저장
-    Optional<Book> findById(Long id);           // 단건 조회
-    /* 권한 분리시 관리자 권한으로 findAll()을 사용해야하므로 남겨둠 */
-    List<Book> findAll();                       // 전체 조회
-    List<Book> findAllByMemberId(Long memberId); // v2.0
-    Optional<Book> findByIdAndMemberId(Long id, Long memberId); // v2.0 - 타인 접근 제한용 메서드
-    void update(Long bookId, Book updateParam); // 수정
-    void delete(Long bookId);                   // 삭제
+    // NOTE: v3.0부터 save(Book), findById(Long), findAll(), delete(Book)는 JpaRepository가 기본 제공
+    
+    List<Book> findAllByMemberId(Long memberId);
+
+    Optional<Book> findByIdAndMemberId(Long id, Long memberId); // 타인 접근 제한용 메서드
+
 }

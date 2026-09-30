@@ -1,12 +1,11 @@
 package com.soohyeon.booklog.repository;
 
 import com.soohyeon.booklog.domain.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface MemberRepository {
+public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    Member save(Member member);
-    Optional<Member> findById(Long id);
     Optional<Member> findByLoginId(String loginId);
 }
