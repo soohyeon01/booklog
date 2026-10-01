@@ -1,15 +1,16 @@
 package com.soohyeon.booklog.service;
 
+import com.soohyeon.booklog.domain.Author;
 import com.soohyeon.booklog.domain.Book;
 import com.soohyeon.booklog.domain.BookStatus;
+import com.soohyeon.booklog.repository.AuthorRepository;
 import com.soohyeon.booklog.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,11 +18,13 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final AuthorRepository authorRepository;
 
     @Override
     @Transactional
-    public Book saveBook(Book book, Long memberId) {
+    public Book saveBook(Book book, Long memberId, String authorNames) {
         book.setMemberId(memberId);
+        book.getAuthors().addAll(resolveAuthors(authorNames));
         return bookRepository.save(book);
     }
 
@@ -78,30 +81,53 @@ public class BookServiceImpl implements BookService {
 
         // 키워드 형식 단일화
         String searchKeyword = keyword.trim().toLowerCase();
+
         boolean matchTitle = book.getTitle() != null
                 && book.getTitle().toLowerCase().contains(searchKeyword);
-        boolean matchAuthor = book.getAuthor() != null
-                && book.getAuthor().toLowerCase().contains(searchKeyword);
-        return matchTitle || matchAuthor;
 
+        // v3.0 : author를 별도의 객체로 분리 setAuthor 사용
+        boolean matchAuthor = book.getAuthors().stream()
+                .anyMatch(author -> author.getName() != null
+                        && author.getName().toLowerCase().contains(searchKeyword));
+
+        return matchTitle || matchAuthor;
     }
 
 
     /* update remove 할 때, 먼저 권한을 검증 */
-
     @Override
     @Transactional
-    public void updateBook(Long bookId, Long memberId, Book updateParam) {
+    public void updateBook(Long bookId, Long memberId, Book updateParam, String authorNames) {
         Book book = bookRepository.findByIdAndMemberId(bookId, memberId)
                 .orElseThrow(() -> new IllegalArgumentException("본인 서재의 책만 수정할 수 있습니다."));
 
         // 트랜잭션 커밋 시 Dirty Checking으로 자동 update
         book.setTitle(updateParam.getTitle());
-        book.setAuthor(updateParam.getAuthor());
         book.setStatus(updateParam.getStatus());
         book.setRating(updateParam.getRating());
         book.setSummary(updateParam.getSummary());
         book.setMemo(updateParam.getMemo());
+
+        // 기존 저자와의 연결을 끊고, 아예 새로운 저자와 연결 (내용물만)
+        book.getAuthors().clear();
+        book.getAuthors().addAll(resolveAuthors(authorNames));
+    }
+
+    /**
+     * 콤마로 구분된 문자열을 Author 엔티티 집합으로 변환.
+     * 이미 존재하는 저자명이면 재사용, 없으면 새로 생성(findOrCreate 패턴).
+     */
+    private Set<Author> resolveAuthors(String authorNames) {
+        if (authorNames == null || authorNames.isBlank()) {
+            return new HashSet<>();
+        }
+
+        return Arrays.stream(authorNames.split(","))
+                .map(String::trim)
+                .filter(name -> !name.isBlank())
+                .map(name -> authorRepository.findByName(name)
+                        .orElseGet(() -> authorRepository.save(new Author(name))))
+                .collect(Collectors.toSet());
     }
 
     @Override

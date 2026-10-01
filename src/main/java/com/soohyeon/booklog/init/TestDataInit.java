@@ -24,17 +24,17 @@ public class TestDataInit {
         Member member2 = getOrCreateMember("user2", "1234", "이서재", MemberRole.USER);
         Member admin = getOrCreateMember("admin", "admin", "관리자", MemberRole.ADMIN);
 
-        if (bookRepository.findAllByMemberId(member1.getId()).isEmpty()) {
-            List<Book> books = BookDummyData.books();
-
-            // 원할한 테스트를 위해 더미 데이터를 절반씩 나눠서 두 회원에게 배정
-            int half = books.size() / 2;
-            for (int i = 0; i < books.size(); i++) {
-                Book book = books.get(i);
-                book.setMemberId(i < half ? member1.getId() : member2.getId());
-                bookRepository.save(book);
-            }
-        }
+//        if (bookRepository.findAllByMemberId(member1.getId()).isEmpty()) {
+//            List<Book> books = BookDummyData.books();
+//
+//            // 원할한 테스트를 위해 더미 데이터를 절반씩 나눠서 두 회원에게 배정
+//            int half = books.size() / 2;
+//            for (int i = 0; i < books.size(); i++) {
+//                Book book = books.get(i);
+//                book.setMemberId(i < half ? member1.getId() : member2.getId());
+//                bookRepository.save(book);
+//            }
+//        }
     }
 
     private Member getOrCreateMember(String loginId, String password, String name, MemberRole role) {

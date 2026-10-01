@@ -1,5 +1,6 @@
 package com.soohyeon.booklog.web;
 
+import com.soohyeon.booklog.domain.Author;
 import com.soohyeon.booklog.domain.Book;
 import com.soohyeon.booklog.domain.BookStatus;
 import com.soohyeon.booklog.service.BookService;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/books")
@@ -82,14 +84,12 @@ public class BookController {
 
         Book book = new Book();
         book.setTitle(form.getTitle());
-        book.setAuthor(form.getAuthor());
         book.setStatus(form.getStatus());
         book.setRating(form.getRating());
         book.setSummary(form.getSummary());
         book.setMemo(form.getMemo());
 
-        // 성공 로직
-        Book savedBook = bookService.saveBook(book, memberId);
+        Book savedBook = bookService.saveBook(book, memberId, form.getAuthor());   // form.getAuthor()를 authorNames로 전달
         redirectAttributes.addAttribute("bookId", savedBook.getId());
         redirectAttributes.addFlashAttribute("message", "책이 성공적으로 등록되었습니다!");
         return "redirect:/books/{bookId}";
@@ -111,7 +111,7 @@ public class BookController {
 
         BookForm form = new BookForm();
         form.setTitle(book.getTitle());
-        form.setAuthor(book.getAuthor());
+        form.setAuthor(toAuthorNames(book));   // 수정
         form.setStatus(book.getStatus());
         form.setRating(book.getRating());
         form.setSummary(book.getSummary());
@@ -121,6 +121,15 @@ public class BookController {
         model.addAttribute("bookId", bookId);
 
         return "books/editForm";
+    }
+
+    /**
+     * Book의 Set<Author>를 폼 입력란에 보여줄 "이름1, 이름2" 형태의 문자열로 변환
+     */
+    private String toAuthorNames(Book book) {
+        return book.getAuthors().stream()
+                .map(Author::getName)
+                .collect(Collectors.joining(", "));
     }
 
     // 4-2
@@ -140,13 +149,12 @@ public class BookController {
 
         Book updateParam = new Book();
         updateParam.setTitle(form.getTitle());
-        updateParam.setAuthor(form.getAuthor());
         updateParam.setStatus(form.getStatus());
         updateParam.setRating(form.getRating());
         updateParam.setSummary(form.getSummary());
         updateParam.setMemo(form.getMemo());
 
-        bookService.updateBook(bookId,memberId, updateParam);   // memberId 추가
+        bookService.updateBook(bookId,memberId, updateParam, form.getAuthor());   // memberId 추가
 
         redirectAttributes.addAttribute("bookId", bookId);
         redirectAttributes.addFlashAttribute("message", "정보가 정상적으로 수정되었습니다!");

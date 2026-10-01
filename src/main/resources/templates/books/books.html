@@ -96,7 +96,11 @@
                             책 제목
                         </a>
                     </td>
-                    <td th:text="${book.author}">저자</td>
+                    <td>
+                        <span th:each="author, iterStat : ${book.authors}">
+                            <span th:text="${author.name}"></span><span th:if="${!iterStat.last}">, </span>
+                        </span>
+                    </td>
                     <td>
                         <span th:if="${book.status.name() == 'WISH'}" class="badge bg-warning text-white py-1 px-2">읽고 싶은</span>
                         <span th:if="${book.status.name() == 'READING'}"
