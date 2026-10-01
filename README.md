@@ -33,20 +33,64 @@ JPA와 MySQL 기반 구조로 전환했습니다.
 
 현재는 다음과 같은 도메인 구조를 갖추고 있습니다.
 
-```text
-Member
-   │
-   │ 1:N
-   ▼
- Book
- ├── N:M ── Author
- ├── N:M ── Tag
- └── 1:N ── ReadingLog
+```mermaid
+erDiagram
+    MEMBER {
+        Long id PK
+        String loginId UK
+        String password
+        String name
+        MemberRole role
+    }
+
+    BOOK {
+        Long id PK
+        Long memberId FK
+        String title
+        BookStatus status
+        Integer rating
+        String summary
+        String memo
+        LocalDateTime createdAt
+    }
+
+    AUTHOR {
+        Long id PK
+        String name UK
+    }
+
+    BOOK_AUTHOR {
+        Long bookId FK, UK
+        Long authorId FK, UK
+    }
+
+    TAG {
+        Long id PK
+        String genre
+    }
+
+    BOOK_TAG {
+        Long bookId FK, UK
+        Long tagId FK, UK
+    }
+
+    READING_LOG {
+        Long id PK
+        Long bookId FK
+        String content
+        LocalDateTime logDate
+    }
+
+    MEMBER ||--o{ BOOK : "등록한다"
+    BOOK ||--o{ BOOK_AUTHOR : ""
+    AUTHOR ||--o{ BOOK_AUTHOR : ""
+    BOOK ||--o{ BOOK_TAG : ""
+    TAG ||--o{ BOOK_TAG : ""
+    BOOK ||--o{ READING_LOG : "기록을 남긴다"
 ```
 
-이를 통해 단순한 책 목록 관리에서 벗어나
-회원별 데이터 분리, 다대다 관계, 독서 기록 누적, 태그 기반 분류가 가능한 구조로 확장했습니다.
-
+> 회원(Member)은 여러 권의 도서(Book)를 소유하며, 각 도서는 여러 저자(Author)·태그(Tag)와 다대다로 연결됩니다.
+> 독서기록(ReadingLog)은 회원이 아닌 도서에 직접 연결되어, 특정 책에 대한 기록만 누적되도록 설계했습니다.
 ---
 
 ## 🛠️ 기술 스택
