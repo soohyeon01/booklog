@@ -2,6 +2,12 @@
 
 > **책을 넘어, 읽은 경험과 생각을 기록하는 독서 회고 플랫폼**
 
+![Java](https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0-6DB33F?logo=springboot&logoColor=white)
+![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-6DB33F?logo=spring&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white)
+![Thymeleaf](https://img.shields.io/badge/Thymeleaf-005F0F?logo=thymeleaf&logoColor=white)
+
 Spring Boot와 Thymeleaf를 기반으로 개발한 개인 독서 기록 및 서재 관리 웹 애플리케이션입니다.
 
 단순 CRUD 구현에 그치지 않고, 프로젝트를 단계적으로 확장하며  
