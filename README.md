@@ -109,7 +109,7 @@ Member
 - 사용자별 서재
 - 사용자별 데이터 접근 제어
 
-💾 [v3.0 | JPA 및 관계형 데이터 모델링](docs/requirements-v3.md)
+💾 [v3.0 | JPA 및 관계형 데이터 모델링](docs/requirements-v3.md) (작성 예정)
 - Spring Data JPA 적용
 - MySQL 전환
 - Repository를 JpaRepository 기반으로 전환
