@@ -3,6 +3,7 @@ package com.soohyeon.booklog.web;
 import com.soohyeon.booklog.domain.Author;
 import com.soohyeon.booklog.domain.Book;
 import com.soohyeon.booklog.domain.BookStatus;
+import com.soohyeon.booklog.domain.Tag;
 import com.soohyeon.booklog.service.BookService;
 import com.soohyeon.booklog.web.argumentresolver.LoginMember;
 import com.soohyeon.booklog.web.form.BookForm;
@@ -89,7 +90,7 @@ public class BookController {
         book.setSummary(form.getSummary());
         book.setMemo(form.getMemo());
 
-        Book savedBook = bookService.saveBook(book, memberId, form.getAuthor());   // form.getAuthor()를 authorNames로 전달
+        Book savedBook = bookService.saveBook(book, memberId, form.getAuthor(), form.getTags());    // tag 파라미터 추가
         redirectAttributes.addAttribute("bookId", savedBook.getId());
         redirectAttributes.addFlashAttribute("message", "책이 성공적으로 등록되었습니다!");
         return "redirect:/books/{bookId}";
@@ -111,7 +112,8 @@ public class BookController {
 
         BookForm form = new BookForm();
         form.setTitle(book.getTitle());
-        form.setAuthor(toAuthorNames(book));   // 수정
+        form.setAuthor(toAuthorNames(book));
+        form.setTags(toTagNames(book));     // 추가
         form.setStatus(book.getStatus());
         form.setRating(book.getRating());
         form.setSummary(book.getSummary());
@@ -121,6 +123,11 @@ public class BookController {
         model.addAttribute("bookId", bookId);
 
         return "books/editForm";
+    }
+
+    private String toTagNames(Book book) {
+        return book.getTags().stream().map(Tag::getName).sorted()
+                .collect(Collectors.joining(", "));
     }
 
     /**
@@ -154,7 +161,7 @@ public class BookController {
         updateParam.setSummary(form.getSummary());
         updateParam.setMemo(form.getMemo());
 
-        bookService.updateBook(bookId,memberId, updateParam, form.getAuthor());   // memberId 추가
+        bookService.updateBook(bookId,memberId, updateParam, form.getAuthor(), form.getTags());   // tag 추가
 
         redirectAttributes.addAttribute("bookId", bookId);
         redirectAttributes.addFlashAttribute("message", "정보가 정상적으로 수정되었습니다!");

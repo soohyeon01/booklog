@@ -92,9 +92,13 @@
                     <td th:text="${book.id}" class="text-secondary small">1</td>
                     <td style="text-align: left;">
                         <a th:href="@{/books/{bookId}(bookId=${book.id})}"
-                           class="text-decoration-none fw-semibold text-primary" th:text="${book.title}">
-                            책 제목
-                        </a>
+                           class="text-decoration-none fw-semibold text-primary" th:text="${book.title}">책 제목</a>
+                        <!-- 태그 필드 추가 -->
+                        <div class="mt-1">
+                            <a th:each="tag : ${book.tags}" th:href="@{/books(keyword=${tag.name})}"
+                               class="badge rounded-pill bg-light text-dark border text-decoration-none me-1"
+                               th:text="'#' + ${tag.name}">#소설</a>
+                        </div>
                     </td>
                     <td>
                         <span th:each="author, iterStat : ${book.authors}">

@@ -30,4 +30,7 @@ public class BookForm {
     @Size(max = 500)
     private String memo;
 
+    @Size(max = 100)
+    private String tags;   // 콤마 구분, 선택 입력
+
 }

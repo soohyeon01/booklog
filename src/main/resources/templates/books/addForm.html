@@ -104,35 +104,35 @@
 
             </div>
 
-
             <!-- 한줄평 -->
             <div class="mb-3">
-
                 <label for="summary" class="form-label fw-semibold">한줄평</label>
-
                 <input type="text" id="summary" th:field="*{summary}" th:errorclass="field-error"
                        class="form-control" placeholder="가벼운 소감을 적어주세요">
-
                 <div class="field-error" th:errors="*{summary}">
                     한줄평 오류
                 </div>
-
             </div>
 
             <!-- 메모 -->
             <div class="mb-4">
-
                 <label for="memo" class="form-label fw-semibold">
                     메모
                 </label>
-
                 <textarea id="memo" th:field="*{memo}" th:errorclass="field-error" rows="5"
                           class="form-control" placeholder="길게 남길 회고를 입력하세요"></textarea>
-
                 <div class="field-error" th:errors="*{memo}">
                     메모 오류
                 </div>
 
+            </div>
+
+            <!-- 태그 -->
+            <div class="mb-3">
+                <label for="tags" class="form-label fw-semibold">태그</label>
+                <input type="text" id="tags" th:field="*{tags}" th:errorclass="field-error"
+                       class="form-control" placeholder="콤마로 구분 (예: 소설, 고전, 추천)">
+                <div class="field-error" th:errors="*{tags}">태그 오류</div>
             </div>
 
             <hr class="my-4">

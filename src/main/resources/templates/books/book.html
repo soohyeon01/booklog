@@ -84,6 +84,18 @@
                 </div>
             </div>
 
+            <div class="list-group-item py-3">
+                <div class="row">
+                    <div class="col-sm-3 text-secondary fw-semibold">태그</div>
+                    <div class="col-sm-9">
+                        <a th:each="tag : ${book.tags}" th:href="@{/books(keyword=${tag.name})}"
+                           class="badge rounded-pill bg-light text-dark border text-decoration-none me-1"
+                           th:text="'#' + ${tag.name}">#소설</a>
+                        <span th:if="${book.tags.isEmpty()}" class="text-muted">-</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <hr class="my-4">
