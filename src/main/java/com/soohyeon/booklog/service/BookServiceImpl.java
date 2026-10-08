@@ -5,6 +5,7 @@ import com.soohyeon.booklog.domain.Book;
 import com.soohyeon.booklog.domain.BookStatus;
 import com.soohyeon.booklog.repository.AuthorRepository;
 import com.soohyeon.booklog.repository.BookRepository;
+import com.soohyeon.booklog.repository.ReadingLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +19,17 @@ import java.util.stream.Collectors;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
-    private final AuthorRepository authorRepository;
+    private final BookRelationResolver relationResolver;      // AuthorRepository 직접 주입 대신 교체
+    private final ReadingLogRepository readingLogRepository;  // removeBook에서 사용
 
+
+    // TODO: 시용자가 태그를 등록한 순서대로 화면에 노출되도록 수정. 현재는 목록에서 새로고침할 때마다 태그의 순서가 랜덤으로 배정됨
     @Override
     @Transactional
-    public Book saveBook(Book book, Long memberId, String authorNames) {
+    public Book saveBook(Book book, Long memberId, String authorNames, String tagNames) {
         book.setMemberId(memberId);
-        book.getAuthors().addAll(resolveAuthors(authorNames));
+        book.getAuthors().addAll(relationResolver.resolveAuthors(authorNames)); // resolver에서 가져다쓰는 방식으로 변경
+        book.getTags().addAll(relationResolver.resolveTags(tagNames));
         return bookRepository.save(book);
     }
 
@@ -75,7 +80,7 @@ public class BookServiceImpl implements BookService {
         return book.getStatus() == status;
     }
 
-    /* 키워드 검색 조건 메서드 분리(제목, 저자 검색) */
+    /* 키워드 검색 조건 메서드 분리 */
     private boolean filterByKeyword(Book book, String keyword) {
         if (keyword == null || keyword.isBlank()) return true;
 
@@ -90,14 +95,18 @@ public class BookServiceImpl implements BookService {
                 .anyMatch(author -> author.getName() != null
                         && author.getName().toLowerCase().contains(searchKeyword));
 
-        return matchTitle || matchAuthor;
+        boolean matchTag = book.getTags().stream()
+                .anyMatch(tag -> tag.getName() != null && tag.getName().toLowerCase().contains(searchKeyword));
+
+
+        return matchTitle || matchAuthor || matchTag;
     }
 
 
     /* update remove 할 때, 먼저 권한을 검증 */
     @Override
     @Transactional
-    public void updateBook(Long bookId, Long memberId, Book updateParam, String authorNames) {
+    public void updateBook(Long bookId, Long memberId, Book updateParam, String authorNames, String tagNames) {
         Book book = bookRepository.findByIdAndMemberId(bookId, memberId)
                 .orElseThrow(() -> new IllegalArgumentException("본인 서재의 책만 수정할 수 있습니다."));
 
@@ -108,27 +117,14 @@ public class BookServiceImpl implements BookService {
         book.setSummary(updateParam.getSummary());
         book.setMemo(updateParam.getMemo());
 
-        // 기존 저자와의 연결을 끊고, 아예 새로운 저자와 연결 (내용물만)
+        // resolver 를 별도로 분리하고 tag 필드 추가
         book.getAuthors().clear();
-        book.getAuthors().addAll(resolveAuthors(authorNames));
+        book.getAuthors().addAll(relationResolver.resolveAuthors(authorNames));
+        book.getTags().clear();
+        book.getTags().addAll(relationResolver.resolveTags(tagNames));
     }
 
-    /**
-     * 콤마로 구분된 문자열을 Author 엔티티 집합으로 변환.
-     * 이미 존재하는 저자명이면 재사용, 없으면 새로 생성(findOrCreate 패턴).
-     */
-    private Set<Author> resolveAuthors(String authorNames) {
-        if (authorNames == null || authorNames.isBlank()) {
-            return new HashSet<>();
-        }
-
-        return Arrays.stream(authorNames.split(","))
-                .map(String::trim)
-                .filter(name -> !name.isBlank())
-                .map(name -> authorRepository.findByName(name)
-                        .orElseGet(() -> authorRepository.save(new Author(name))))
-                .collect(Collectors.toSet());
-    }
+    /* 기존 resolveAuthors 메서드 제거 */
 
     @Override
     @Transactional
@@ -136,6 +132,7 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findByIdAndMemberId(bookId, memberId)
                 .orElseThrow(() -> new IllegalArgumentException("본인 서재의 책만 삭제할 수 있습니다."));
 
-        bookRepository.delete(book);   // 기존 bookId를 파라미터로 받는 방식에서 Jpa 호환되는 파라미터로 변경
+        readingLogRepository.deleteAllByBookId(bookId);   // reading_log FK 때문에 먼저 삭제
+        bookRepository.delete(book);
     }
 }
