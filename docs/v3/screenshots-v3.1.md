@@ -1,7 +1,7 @@
 # 🖼️ BookLog v3.1 최종 릴리즈 결과 화면 (Screenshots)
 
 > v3.1 기준 BookLog의 주요 기능 및 UI/UX 결과 화면을 정리합니다.
-> v3.0에서 모델링한 Tag·ReadingLog를 화면과 기능으로 연결한 결과를 담고 있으며, 회원별 격리·접근 제어 화면은 [v2.0 결과 화면](../v2/screenshots-v2.0.md)을 참고하세요.
+> v3.0에서 모델링한 Tag·ReadingLog를 화면과 기능으로 연결한 결과를 담고 있으며, 회원별 격리·접근 제어 화면은 [v2.0 결과 화면](../v2/screenshots-v2.md)을 참고하세요.
 
 ---
 
