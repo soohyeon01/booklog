@@ -23,24 +23,30 @@
 
         <div class="list-group list-group-flush mb-4">
 
+            <!-- 제목 -->
             <div class="list-group-item py-3">
                 <div class="row">
                     <div class="col-sm-3 text-secondary fw-semibold">제목</div>
-                    <div class="col-sm-9"><h4 class="fw-bold text-primary mb-0" th:text="${book.title}">데미안</h4></div>
+                    <div class="col-sm-9">
+                        <h4 class="fw-bold text-primary mb-0" th:text="${book.title}">데미안</h4>
+                    </div>
                 </div>
             </div>
 
+            <!-- 저자 -->
             <div class="list-group-item py-3">
                 <div class="row">
                     <div class="col-sm-3 text-secondary fw-semibold">저자</div>
                     <div class="col-sm-9 fw-semibold text-dark">
                         <span th:each="author, iterStat : ${book.authors}">
-                        <span th:text="${author.name}">저자명</span><span th:if="${!iterStat.last}">, </span>
+                        <span th:text="${author.name}">저자명</span>
+                            <span th:if="${!iterStat.last}">, </span>
                         </span>
                     </div>
                 </div>
             </div>
 
+            <!-- 독서 상태 -->
             <div class="list-group-item py-3">
                 <div class="row">
                     <div class="col-sm-3 text-secondary fw-semibold">독서 상태</div>
@@ -55,6 +61,7 @@
                 </div>
             </div>
 
+            <!-- 평점 -->
             <div class="list-group-item py-3">
                 <div class="row">
                     <div class="col-sm-3 text-secondary fw-semibold">평점</div>
@@ -65,13 +72,17 @@
                 </div>
             </div>
 
+            <!-- 한줄평 -->
             <div class="list-group-item py-3">
                 <div class="row">
                     <div class="col-sm-3 text-secondary fw-semibold">한줄평</div>
-                    <div class="col-sm-9 text-muted fst-italic" th:text="${book.summary}">내면의 성장을 이끄는 최고의 책</div>
+                    <div class="col-sm-9 text-muted fst-italic"
+                         th:text="${book.summary}">내면의 성장을 이끄는 최고의 책
+                    </div>
                 </div>
             </div>
 
+            <!-- 상세 메모 -->
             <div class="list-group-item py-3">
                 <div class="row">
                     <div class="col-sm-3 text-secondary fw-semibold">상세 메모</div>
@@ -84,6 +95,7 @@
                 </div>
             </div>
 
+            <!-- 태그 -->
             <div class="list-group-item py-3">
                 <div class="row">
                     <div class="col-sm-3 text-secondary fw-semibold">태그</div>
@@ -100,8 +112,10 @@
 
         <hr class="my-4">
 
+        <!-- 도서 관리 버튼 -->
         <div class="d-flex justify-content-between align-items-center">
-            <button type="button" class="btn btn-outline-secondary px-3 fw-bold"
+            <button type="button"
+                    class="btn btn-outline-secondary px-3 fw-bold"
                     th:onclick="|location.href='@{/books}'|">
                 목록으로
             </button>
@@ -120,6 +134,78 @@
                 </form>
             </div>
         </div>
+    </section>
+
+    <!-- 독서 기록 -->
+    <section class="card shadow-sm p-4 mt-4">
+
+        <h4 class="fw-bold text-dark mb-3">
+            독서 기록
+            <span class="badge bg-secondary"
+                  th:text="${#lists.size(logs)}">0</span>
+        </h4>
+
+        <div th:if="${logError}" class="alert alert-danger py-2" th:text="${logError}">오류</div>
+
+        <!-- 새 독서 기록 등록 폼 -->
+        <form th:action="@{/books/{bookId}/logs(bookId=${book.id})}" method="post" class="mb-4">
+
+            <label for="readingDate" class="form-label fw-semibold">
+                읽은 날짜
+            </label>
+
+            <input type="date" id="readingDate" name="readingDate" class="form-control form-control-sm mb-2" style="max-width: 200px;"
+                   th:value="${#temporals.format(#temporals.createToday(), 'yyyy-MM-dd')}"
+                   th:max="${#temporals.format(#temporals.createToday(), 'yyyy-MM-dd')}">
+
+            <label for="content" class="form-label fw-semibold">
+                기록 내용
+            </label>
+
+            <textarea id="content" name="content" rows="3" maxlength="1000" class="form-control mb-2"
+                      placeholder="오늘 읽은 부분이나 떠오른 생각을 남겨보세요"></textarea>
+
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary btn-sm fw-bold">기록 추가</button>
+            </div>
+        </form>
+
+        <!-- 기록이 없는 경우 -->
+        <div th:if="${#lists.isEmpty(logs)}" class="text-muted text-center py-3">
+            아직 남긴 기록이 없습니다.
+        </div>
+
+        <!-- 기존 독서 기록 목록 -->
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item px-0" th:each="log : ${logs}">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div class="flex-grow-1">
+
+                        <!-- readingDate는 LocalDate이므로 날짜만 출력 -->
+                        <div class="small text-secondary mb-1"
+                             th:text="${log.readingDate != null
+                                ? #temporals.format(log.readingDate, 'yyyy-MM-dd')
+                                : '-'}">
+                            2026-10-01
+                        </div>
+
+
+                        <div style="white-space: pre-wrap;"
+                             th:text="${log.content}">기록 내용
+                        </div>
+                    </div>
+
+                    <!-- 독서 기록 삭제 -->
+                    <form th:action="@{/books/{bookId}/logs/{logId}/delete(bookId=${book.id}, logId=${log.id})}"
+                          method="post">
+                        <button type="submit" onclick="return confirm('해당 기록을 삭제할까요?');"
+                                class="btn btn-sm btn-outline-danger py-0 px-2">삭제
+                        </button>
+                    </form>
+                </div>
+
+            </li>
+        </ul>
 
     </section>
 </main>

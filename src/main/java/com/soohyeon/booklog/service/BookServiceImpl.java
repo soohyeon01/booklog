@@ -1,9 +1,7 @@
 package com.soohyeon.booklog.service;
 
-import com.soohyeon.booklog.domain.Author;
 import com.soohyeon.booklog.domain.Book;
 import com.soohyeon.booklog.domain.BookStatus;
-import com.soohyeon.booklog.repository.AuthorRepository;
 import com.soohyeon.booklog.repository.BookRepository;
 import com.soohyeon.booklog.repository.ReadingLogRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

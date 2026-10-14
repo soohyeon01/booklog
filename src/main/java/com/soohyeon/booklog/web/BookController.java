@@ -5,6 +5,7 @@ import com.soohyeon.booklog.domain.Book;
 import com.soohyeon.booklog.domain.BookStatus;
 import com.soohyeon.booklog.domain.Tag;
 import com.soohyeon.booklog.service.BookService;
+import com.soohyeon.booklog.service.ReadingLogService;
 import com.soohyeon.booklog.web.argumentresolver.LoginMember;
 import com.soohyeon.booklog.web.form.BookForm;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 public class BookController {
 
     private final BookService bookService;
+    private final ReadingLogService readingLogService;
 
     /**
      * 1. 도서 전체 목록 조회 및 필터링
@@ -101,6 +103,7 @@ public class BookController {
     public String book(@LoginMember Long memberId, @PathVariable Long bookId, Model model) {
         Book book = optionalToBook(bookId, memberId);
         model.addAttribute("book", book);
+        model.addAttribute("logs", readingLogService.findLogs(bookId, memberId));   // 추가
 
         return "/books/book";
     }

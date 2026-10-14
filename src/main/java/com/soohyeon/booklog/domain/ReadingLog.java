@@ -3,15 +3,11 @@ package com.soohyeon.booklog.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 
 @Entity
 @Table(name = "reading_log")
-@EntityListeners(AuditingEntityListener.class) // 자동 값 주입
 @Getter
 @Setter
 public class ReadingLog {
@@ -28,16 +24,17 @@ public class ReadingLog {
     @Column(nullable = false, length = 1000)
     private String content;
 
-    // 월별 독서량 집계시 필요
-    @CreatedDate
-    @Column(name = "reading_date", nullable = false, updatable = false)
-    private LocalDateTime readingDate;
+    // 월별 독서량 집계시 필요 -> 사용자가 날짜를 직접 등록할 수 있게 수정
+    @Column(name = "reading_date", nullable = false)
+    private LocalDate readingDate;
 
     public ReadingLog() {
     }
 
-    public ReadingLog(Book book, String content, LocalDate readingDate) {
+    public ReadingLog(Book book, String content, LocalDate readingDate
+    ) {
         this.book = book;
         this.content = content;
+        this.readingDate = readingDate;
     }
 }
