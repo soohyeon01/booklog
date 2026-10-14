@@ -2,21 +2,20 @@
 
 ### 🟡 예정된 기능 (To-Do) -> 🟢 모두 완료 (Done)
 
-### 2026.09.30 (Tue)
-- [v3.0-migration] 레거시 데이터 마이그레이션 및 더미데이터 구조 개선
+### 2026.09.30 (Wed)
+- [v3.0-migration] 레거시 데이터 마이그레이션
     - [x] 레거시 `author`(String) 컬럼 값을 `Author` 테이블 및 `book_author` 조인테이블로 이관하는 1회성 마이그레이션(`LegacyAuthorMigration`, `JdbcTemplate` 기반) 구현
     - [x] 동일 저자명 재사용(find-or-create) 및 중복 실행 방지 가드 적용
     - [x] 마이그레이션 완료 후 해당 컴포넌트 비활성화(주석 처리)
-    - [ ] `BookDummyData`를 `Book` 엔티티와 결합되지 않는 `BookSeed` record로 분리하는 리팩터링 — 아직 착수하지 않음. 엔티티 변경으로 컴파일이 깨진 `BookDummyData`/`TestDataInit`의 더미데이터 삽입 로직은 우선 전체 주석 처리하여 애플리케이션 구동만 가능하도록 임시 조치
 
-### 2026.09.29 (Mon)
+### 2026.09.29 (Tue)
 - [v3.0-domain] 저자(Author) 반영 로직 전면 리팩토링
     - [x] `BookService`/`BookServiceImpl`의 `saveBook`, `updateBook`에 콤마로 구분된 저자명 문자열(`authorNames`) 파라미터 추가
     - [x] 입력된 저자명을 `Author` 엔티티로 변환하는 `resolveAuthors` 메서드 구현 (기존 저자명 재사용, 신규 저자 생성)
     - [x] `BookController`의 `add`/`edit` 흐름에 `authorNames` 전달 로직 반영, 수정 폼 진입 시 `Set<Author>` → 콤마 구분 문자열 변환 로직 추가
     - [x] `books.html`/`book.html`의 저자 표시 영역을 `Set<Author>` 순회 방식으로 수정
 
-### 2026.09.28 (Sun)
+### 2026.09.28 (Mon)
 - [v3.0-model] Author / Tag / ReadingLog 엔티티 설계 및 연관관계 모델링
     - [x] ERD 설계: 회원(1)-도서(N), 도서-저자(N:M), 도서-태그(N:M), 도서(1)-독서기록(N) 구조로 확정
     - [x] `Book.author`(String) 필드 제거, `Author` 엔티티 신설 및 `@ManyToMany` + `@JoinTable`(`book_author`)로 전환

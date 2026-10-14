@@ -31,7 +31,8 @@ public class BookRelationResolver {
                 .collect(Collectors.toSet());
     }
 
-    public Set<Tag> resolveTags(String names) {
+    public Set<Tag>
+    resolveTags(String names) {
         return split(names).stream()
                 .map(name -> name.startsWith("#") ? name.substring(1).trim() : name)
                 .filter(name -> !name.isBlank() && name.length() <= 30)

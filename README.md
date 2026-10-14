@@ -110,15 +110,15 @@ erDiagram
         Long id PK
         Long bookId FK
         String content
-        LocalDateTime logDate
+        LocalDate readingDate
     }
 
-    MEMBER ||--o{ BOOK : "등록한다"
+    MEMBER ||--o{ BOOK : ""
     BOOK ||--o{ BOOK_AUTHOR : ""
     AUTHOR ||--o{ BOOK_AUTHOR : ""
     BOOK ||--o{ BOOK_TAG : ""
     TAG ||--o{ BOOK_TAG : ""
-    BOOK ||--o{ READING_LOG : "기록을 남긴다"
+    BOOK ||--o{ READING_LOG : ""
 ```
 
 ---
@@ -134,7 +134,31 @@ erDiagram
 
 
 💾 [v3.0 | JPA 및 관계형 데이터 모델링](docs/v3/requirements-v3.md)
-- Spring Data JPA 적용, MySQL 전환, Repository JpaRepository 전환 ✅
-- Author / Tag / ReadingLog 엔티티 및 N:M 관계 도입, 레거시 데이터 마이그레이션 ✅
-- Query 최적화(N+1 해결) — 남은 작업
+- Spring Data JPA 적용, MySQL 전환
+- Repository를 JpaRepository 기반으로 전환 및 Service 트랜잭션 적용
+- Author / Tag / ReadingLog 엔티티 및 N:M 연관관계 도입
+- 기존 Author 문자열 데이터 마이그레이션
 - [📝 개발일지](docs/v3/dev-log-v3.md)
+
+🏷️ [v3.1 | 태그 · 독서 기록 기능](docs/v3/requirements-v3.1.md)
+- 태그 입력 / 뱃지 표시 / 태그 검색 연계
+- 독서 기록 타임라인
+- 더미데이터 구조 개선 및 태그 자동 추론
+- [📝 개발일지](docs/v3/dev-log-v3.1.md)
+
+※ v3.2 이후 항목은 향후 개발 계획이며, 세부 기능과 구현 범위는 변경될 수 있습니다.
+
+⚡ v3.2 | 쿼리 최적화 및 테스트 전환
+- N+1 재현 및 해결, Member ↔ Book 연관관계 개선
+- @DataJpaTest 기반 Repository 테스트
+
+📊 v3.3 | 독서 통계 및 개인 서재 
+- 월별 독서량 집계 및 독서 통계 대시보드
+- 개인 독서 이력 조회 및 관리
+
+🤝 v4.0 | 책 공유 및 교환 독서 플랫폼
+- 사용자 간 책 및 독서 경험 공유
+- 공유 가능한 도서 탐색
+- 교환 신청 및 수락·거절 프로세스
+- 교환 진행 상태 및 이력 관리
+
