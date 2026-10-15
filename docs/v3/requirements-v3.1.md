@@ -40,8 +40,10 @@
 * 정렬: `readingDate` 내림차순, 같은 날짜는 `id` 내림차순
 
 #### 3-4. 보안 요구사항
-* 기록 추가/삭제 전에 `findByIdAndMemberId`로 **책 소유권을 먼저 검증**
-* 삭제 시 `logId`가 해당 `bookId`에 속한 기록인지 `findByIdAndBookId`로 함께 검증 — 내 책 ID에 다른 회원의 기록 ID를 조합해 삭제하는 우회(IDOR) 차단
+* 기록 추가 전에 findByIdAndMemberId로 책 소유권을 먼저 검증
+* 기록 삭제는 findByIdAndBookMemberId(logId, memberId) 한 번의 조회로 "내 책에 속한 기록"인지 검증 — 다른 회원의 기록 ID로 삭제하는 우회(IDOR) 차단
+  * 도서 상세 화면과 독서 이력 화면의 삭제가 동일한 deleteLog(logId, memberId)를 공유하여 삭제 규칙을 한 곳에서 관리하고 조회 쿼리를 1회로 줄임
+  * URL의 bookId는 삭제 후 상세 화면으로 되돌아가는 주소에만 사용함
 
 #### 3-5. 도서 삭제 시 기록 정리
 * `reading_log`는 `Book`을 참조만 하고 `Book` 쪽에서 관계를 관리하지 않아, 도서를 삭제해도 기록이 자동 삭제되지 않고 FK 제약 위반이 발생
