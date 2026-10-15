@@ -68,7 +68,9 @@
             </div>
         </div>
 
-        <div class="d-flex justify-content-end mb-3">
+        <div class="d-flex justify-content-end gap-2 mb-3">
+            <a th:href="@{/stats}" class="btn btn-outline-primary fw-bold">📊 독서 통계</a>
+            <a th:href="@{/history}" class="btn btn-outline-secondary fw-bold">📜 독서 이력</a>
             <button type="button" class="btn btn-success fw-bold shadow-sm"
                     th:onclick="|location.href='@{/books/add}'|">
                 새 책 등록하기

@@ -1,9 +1,6 @@
 package com.soohyeon.booklog.init;
 
-import com.soohyeon.booklog.domain.Book;
-import com.soohyeon.booklog.domain.Member;
-import com.soohyeon.booklog.domain.MemberRole;
-import com.soohyeon.booklog.domain.ReadingLog;
+import com.soohyeon.booklog.domain.*;
 import com.soohyeon.booklog.init.BookDummyData.BookSeed;
 import com.soohyeon.booklog.repository.BookRepository;
 import com.soohyeon.booklog.repository.MemberRepository;
@@ -18,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Component
 @RequiredArgsConstructor
@@ -81,9 +79,27 @@ public class TestDataInit implements ApplicationRunner {
 
             Book saved = bookRepository.save(book);
 
-            // 가장 최근 기록 날짜: 오늘 ~ 59일 전 사이에서 책마다 다르게
-            saveLogs(saved, seed.logs(), today.minusDays(i % 60));
+            // TestDataInit.run()의 saveLogs 호출부 교체
+            List<String> logs = (seed.logs() == null || seed.logs().isEmpty())
+                    ? sampleLogs(seed.status(), i)
+                    : seed.logs();
+            saveLogs(saved, logs, today.minusDays((i * 7L) % 150));   // 오늘 ~ 약 5개월 전
         }
+    }
+
+    // TestDataInit에 메서드 추가 (import BookStatus, IntStream)
+    private List<String> sampleLogs(BookStatus status, int i) {
+        if (status == BookStatus.WISH) {
+            return List.of();   // 읽고 싶은 책은 기록 없음
+        }
+        String[] lines = {
+                "오늘 분량을 읽고 인상 깊은 대목을 메모해 두었다.",
+                "집중이 잘 된 날, 흐름을 놓치지 않고 읽었다.",
+                "잠들기 전에 조금씩 읽는 중.",
+                "앞부분을 다시 훑어보며 내용을 정리했다."
+        };
+        int count = 1 + (i % 4);   // 책마다 1~4개
+        return IntStream.range(0, count).mapToObj(j -> lines[(i + j) % lines.length]).toList();
     }
 
     /**

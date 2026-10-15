@@ -49,7 +49,7 @@ public class ReadingLogController {
                          @PathVariable Long logId,
                          RedirectAttributes redirectAttributes) {
 
-        readingLogService.deleteLog(bookId, logId, memberId);
+        readingLogService.deleteLog(logId, memberId);
         redirectAttributes.addFlashAttribute("message", "독서 기록이 삭제되었습니다.");
         redirectAttributes.addAttribute("bookId", bookId);
         return "redirect:/books/{bookId}";

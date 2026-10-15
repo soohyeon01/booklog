@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment/base :: commonHead}">
+    <title>독서 이력 - BookLog</title>
+</head>
+<body>
+<header th:replace="~{fragment/base :: mainHeader('독서 이력')}"></header>
+
+<main class="container my-5" style="max-width: 800px;">
+    <div th:if="${message}" class="alert alert-success" th:text="${message}">알림</div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a th:href="@{/books}" class="btn btn-outline-secondary">← 내 서재</a>
+        <a th:href="@{/stats}" class="btn btn-outline-primary">📊 독서 통계</a>
+    </div>
+
+    <form th:action="@{/history}" method="get" class="d-flex gap-2 mb-4">
+        <input type="month" name="month" class="form-control" th:value="${month}">
+        <button type="submit" class="btn btn-primary">조회</button>
+        <a th:href="@{/history}" class="btn btn-outline-secondary">전체</a>
+    </form>
+
+    <div th:if="${page.empty}" class="text-center text-muted py-5">조회된 독서 기록이 없습니다.</div>
+
+    <section th:each="entry : ${grouped}" class="card shadow-sm p-4 mb-3">
+        <h5 class="fw-bold border-bottom pb-2 mb-3" th:text="${entry.key}">2026-10</h5>
+        <div th:each="log : ${entry.value}" class="d-flex justify-content-between gap-3 py-2 border-bottom">
+            <div>
+                <div class="small text-secondary">
+                    <span th:text="${#temporals.format(log.readingDate, 'yyyy-MM-dd')}">2026-10-13</span> ·
+                    <a th:href="@{/books/{id}(id=${log.book.id})}" class="text-decoration-none"
+                       th:text="${log.book.title}">책 제목</a>
+                </div>
+                <div style="white-space: pre-wrap;" th:text="${log.content}">기록 내용</div>
+            </div>
+            <form th:action="@{/history/{id}/delete(id=${log.id})}" method="post">
+                <input type="hidden" name="month" th:value="${month}">
+                <input type="hidden" name="page" th:value="${page.number}">
+                <button type="submit" onclick="return confirm('이 기록을 삭제할까요?');"
+                        class="btn btn-sm btn-outline-danger py-0 px-2">삭제
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <nav class="d-flex justify-content-between align-items-center" th:if="${page.totalPages > 1}">
+        <a th:if="${page.hasPrevious()}" th:href="@{/history(month=${month}, page=${page.number - 1})}"
+           class="btn btn-outline-secondary btn-sm">← 이전</a>
+        <span class="text-secondary small" th:text="${page.number + 1} + ' / ' + ${page.totalPages}">1 / 3</span>
+        <a th:if="${page.hasNext()}" th:href="@{/history(month=${month}, page=${page.number + 1})}"
+           class="btn btn-outline-secondary btn-sm">다음 →</a>
+    </nav>
+</main>
+
+<footer th:replace="~{fragment/base :: mainFooter}"></footer>
+</body>
+</html>

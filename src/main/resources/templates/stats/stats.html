@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment/base :: commonHead}">
+    <title>독서 통계 - BookLog</title>
+</head>
+<body>
+<header th:replace="~{fragment/base :: mainHeader('독서 통계')}"></header>
+
+<main class="container my-5">
+    <div class="d-flex justify-content-between mb-4">
+        <a th:href="@{/books}" class="btn btn-outline-secondary">← 내 서재</a>
+        <a th:href="@{/history}" class="btn btn-outline-primary">📜 독서 이력</a>
+    </div>
+
+    <!-- 요약 카드 -->
+    <div class="row g-3 mb-4 text-center">
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm p-3">
+                <div class="text-secondary small">전체 도서</div>
+                <div class="fs-3 fw-bold" th:text="${stats.totalBooks()}">0</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm p-3">
+                <div class="text-secondary small">누적 독서 기록</div>
+                <div class="fs-3 fw-bold" th:text="${stats.totalLogs()}">0</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm p-3">
+                <div class="text-secondary small">이번 달 기록</div>
+                <div class="fs-3 fw-bold" th:text="${stats.thisMonthLogs()}">0</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm p-3">
+                <div class="text-secondary small">평균 평점</div>
+                <div class="fs-3 fw-bold"
+                     th:text="${stats.averageRating() != null} ? ${#numbers.formatDecimal(stats.averageRating(), 1, 1)} : '-'">
+                    -
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="card shadow-sm p-4 mb-4">
+        <h5 class="fw-bold mb-3">월별 독서량 (최근 12개월)</h5>
+        <canvas id="monthlyChart" height="90"></canvas>
+    </section>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <section class="card shadow-sm p-4 h-100">
+                <h5 class="fw-bold mb-3">독서 상태</h5>
+                <canvas id="statusChart"></canvas>
+            </section>
+        </div>
+        <div class="col-md-6">
+            <section class="card shadow-sm p-4 h-100">
+                <h5 class="fw-bold mb-3">평점 분포</h5>
+                <canvas id="ratingChart"></canvas>
+            </section>
+        </div>
+    </div>
+
+    <section class="card shadow-sm p-4">
+        <h5 class="fw-bold mb-3">자주 쓴 태그 TOP 5</h5>
+        <div th:if="${stats.topTags().isEmpty()}" class="text-muted">등록된 태그가 없습니다.</div>
+        <ol class="list-group list-group-numbered" th:unless="${stats.topTags().isEmpty()}">
+            <li class="list-group-item d-flex justify-content-between align-items-center"
+                th:each="t : ${stats.topTags()}">
+                <a th:href="@{/books(keyword=${t.name()})}" class="text-decoration-none"
+                   th:text="'#' + ${t.name()}">#소설</a>
+                <span class="badge bg-secondary" th:text="${t.count()} + '권'">3권</span>
+            </li>
+        </ol>
+    </section>
+</main>
+
+<footer th:replace="~{fragment/base :: mainFooter}"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script th:inline="javascript">
+    const monthLabels = /*[[${stats.monthLabels()}]]*/ [];
+    new Chart(document.getElementById('monthlyChart'), {
+        type: 'bar',
+        data: { labels: monthLabels, datasets: [
+            { label: '기록 수', data: /*[[${stats.monthLogCounts()}]]*/ [] },
+            { label: '읽은 책 수', data: /*[[${stats.monthBookCounts()}]]*/ [] }
+        ]},
+        options: { scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+    });
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: { labels: /*[[${stats.statusLabels()}]]*/ [],
+                datasets: [{ data: /*[[${stats.statusCounts()}]]*/ [] }] }
+    });
+    new Chart(document.getElementById('ratingChart'), {
+        type: 'bar',
+        data: { labels: ['1점', '2점', '3점', '4점', '5점'],
+                datasets: [{ label: '도서 수', data: /*[[${stats.ratingCounts()}]]*/ [] }] },
+        options: { plugins: { legend: { display: false } },
+                   scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+    });
+</script>
+</body>
+</html>
