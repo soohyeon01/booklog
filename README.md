@@ -40,6 +40,7 @@ BookLog는 사용자가 자신의 독서 기록을 관리하고 책에 대한 �
 
 **👤 회원 및 인증**
 - 로그인 / 로그아웃, HTTP Session 기반 인증
+- 회원가입, BCrypt 해시 저장
 - Interceptor를 통한 로그인 사용자 접근 제어
 - `@LoginMember` + ArgumentResolver를 이용한 로그인 사용자 주입
 - 회원별 자신의 도서 데이터만 조회 / 수정 / 삭제
@@ -67,6 +68,7 @@ BookLog는 사용자가 자신의 독서 기록을 관리하고 책에 대한 �
 - **레거시 데이터 마이그레이션**: 엔티티 매핑이 끊긴 컬럼을 `JdbcTemplate`으로 이관하고, 재실행해도 중복되지 않도록 멱등성 가드 적용 → [개발일지](docs/v3/dev-log-v3.md)
 - **DB 집계 기반 통계**: `GROUP BY` 집계를 record DTO로 바로 매핑하고, 비어 있는 구간은 서비스에서 0으로 채움 → [명세](docs/v3/requirements-v3.3.md)
 - **트러블슈팅 기록**: 버전마다 원인·해결·배운 점을 개발일지에 남김
+- **비밀번호 해시 + 세션 보안**: BCrypt 저장, 로그인 시 세션 ID 교체, 기존 평문 계정 멱등 마이그레이션
 
 ---
 
@@ -148,6 +150,7 @@ erDiagram
 | v3.0 | JPA/MySQL 전환 · 관계형 모델링 | 기능 완료 · 테스트 복구 중 | [명세](docs/v3/requirements-v3.md) · [일지](docs/v3/dev-log-v3.md) |
 | v3.1 | 태그 · 독서 기록 | 기능 완료 · 테스트 복구 중 | [명세](docs/v3/requirements-v3.1.md) · [일지](docs/v3/dev-log-v3.1.md) · [화면](docs/v3/screenshots-v3.1.md) |
 | v3.3 | 독서 통계 · 개인 독서 이력 | 기능 완료 · 테스트 복구 중 | [명세](docs/v3/requirements-v3.3.md) · [일지](docs/v3/dev-log-v3.3.md) · [화면](docs/v3/screenshots-v3.3.md) |
+| v3.4 | 보안 강화 · 회원가입 | 기능 완료 · 테스트 복구 중 | [명세·일지](docs/v3/requirements-v3.4.md) |
 | v3.2 | 쿼리 최적화 · 테스트 전환 | ⏳ 예정 | N+1 해결, 연관관계 승격, `@DataJpaTest` |
 | v4.0 | 책 공유·교환 플랫폼 | 💭 구상 | — |
 
