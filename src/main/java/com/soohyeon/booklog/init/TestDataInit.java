@@ -9,6 +9,7 @@ import com.soohyeon.booklog.service.BookRelationResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ public class TestDataInit implements ApplicationRunner {
     private final MemberRepository memberRepository;
     private final ReadingLogRepository readingLogRepository;
     private final BookRelationResolver relationResolver;
+    private final PasswordEncoder passwordEncoder;
 
     // 시드에 태그가 비어있을 때 제목/한줄요약에서 키워드로 추론 (시드 전용 편의 기능)
     private static final Map<String, String> TAG_KEYWORDS = new LinkedHashMap<>();
@@ -125,8 +127,10 @@ public class TestDataInit implements ApplicationRunner {
         return tags.stream().limit(3).collect(Collectors.joining(","));
     }
 
+    // 시드 계정도 비밀번호 해시 저장
     private Member getOrCreateMember(String loginId, String password, String name, MemberRole role) {
         return memberRepository.findByLoginId(loginId)
-                .orElseGet(() -> memberRepository.save(new Member(loginId, password, name, role)));
+                .orElseGet(() -> memberRepository.save(
+                        new Member(loginId, passwordEncoder.encode(password), name, role)));
     }
 }
