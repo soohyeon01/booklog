@@ -14,6 +14,8 @@
     <section class="card shadow-sm p-4">
         <h3 class="mb-4 fw-bold text-dark border-bottom pb-2">BookLog 로그인</h3>
 
+        <div th:if="${message}" class="alert alert-success py-2 mb-3" th:text="${message}">알림</div>
+
         <!-- ${param.error}는 LoginController 에서 return "redirect:/login?error" 와 대응됨 -->
         <div th:if="${param.error}" class="alert alert-danger py-2 mb-3">
             아이디 또는 비밀번호가 일치하지 않습니다.
@@ -36,6 +38,10 @@
             </button>
 
         </form>
+
+        <div class="text-center mt-3 small">
+            아직 계정이 없으신가요? <a th:href="@{/signup}">회원가입</a>
+        </div>
 
     </section>
 

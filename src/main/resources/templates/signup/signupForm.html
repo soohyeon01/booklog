@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragment/base :: commonHead}">
+    <title>회원가입 - BookLog</title>
+</head>
+<body>
+<header th:replace="~{fragment/base :: mainHeader('회원가입')}"></header>
+
+<main class="container my-5" style="max-width: 440px;">
+    <section class="card shadow-sm p-4">
+        <h3 class="mb-4 fw-bold text-dark border-bottom pb-2">BookLog 회원가입</h3>
+
+        <form th:action="@{/signup}" th:object="${signupForm}" method="post">
+
+            <div class="mb-3">
+                <label for="loginId" class="form-label fw-semibold">아이디</label>
+                <input type="text" id="loginId" th:field="*{loginId}" th:errorclass="field-error"
+                       class="form-control" placeholder="영문·숫자 4~20자">
+                <div class="field-error" th:errors="*{loginId}">아이디 오류</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label fw-semibold">비밀번호</label>
+                <input type="password" id="password" th:field="*{password}" th:errorclass="field-error"
+                       class="form-control" placeholder="8~16자">
+                <div class="field-error" th:errors="*{password}">비밀번호 오류</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="passwordConfirm" class="form-label fw-semibold">비밀번호 확인</label>
+                <input type="password" id="passwordConfirm" th:field="*{passwordConfirm}"
+                       th:errorclass="field-error" class="form-control">
+                <div class="field-error" th:errors="*{passwordConfirm}">확인 오류</div>
+            </div>
+
+            <div class="mb-4">
+                <label for="name" class="form-label fw-semibold">이름</label>
+                <input type="text" id="name" th:field="*{name}" th:errorclass="field-error" class="form-control">
+                <div class="field-error" th:errors="*{name}">이름 오류</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm">가입하기</button>
+        </form>
+
+        <div class="text-center mt-3 small">
+            이미 계정이 있으신가요? <a th:href="@{/login}">로그인</a>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragment/base :: mainFooter}"></footer>
+</body>
+</html>

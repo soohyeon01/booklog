@@ -2,6 +2,7 @@ package com.soohyeon.booklog.web;
 
 import com.soohyeon.booklog.domain.Member;
 import com.soohyeon.booklog.repository.MemberRepository;
+import com.soohyeon.booklog.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Optional;
+
 @Controller
 @RequiredArgsConstructor
 public class LoginController {
 
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     @GetMapping("/login")
     public String loginForm() {
@@ -26,17 +29,15 @@ public class LoginController {
                         @RequestParam String password,
                         HttpServletRequest request) {
 
-        Member member = memberRepository.findByLoginId(loginId)
-                .filter(m -> m.getPassword().equals(password))
-                .orElse(null);
-
-        if (member == null) {
+        // 찾을 수 없는 회원인 경우 error return
+        Optional<Member> member = memberService.authenticate(loginId, password);
+        if (member.isEmpty()) {
             return "redirect:/login?error";
         }
 
-        // 추후 설계와 성능을 고려하면 loginId가 아니라 Id 로 회원을 식별하는 것이 유리함
-        //  DB에서도 Id를 PK로 사용함
-        request.getSession().setAttribute("loginMemberId", member.getId());
+        HttpSession session = request.getSession();
+        request.changeSessionId();      // 로그인 시 세션 ID 교체 - 세션 공격 방어
+        session.setAttribute("loginMemberId", member.get().getId());
         return "redirect:/books";
     }
 
